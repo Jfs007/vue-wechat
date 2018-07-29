@@ -64,7 +64,7 @@ export default {
       padding 0 $pxTorem(25)
       font-size $pxTorem(36)
       height $pxTorem(86)
-      border-radius 10px
+      border-radius 5px
       &.q-btn_disable
         color #ffffff
   .messsage-tools
@@ -74,7 +74,7 @@ export default {
     .message-tool__icon 
       padding 0 $pxTorem(15)     
       font-size $pxTorem(54)
-      color #818392
+      color #818392 
 </style>
 
 
