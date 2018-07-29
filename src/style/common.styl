@@ -1,0 +1,70 @@
+@require "./reset.styl"
+
+@require "./_help.styl"  
+$color-primary = #080808
+$color-primary-gradient =#636363
+$bg-color = #f2f2f2
+$btn-primary-bdc = #080808
+// cube ui主题
+$picker-confirm-btn-color := $color-primary
+$picker-confirm-btn-active-color := $color-primary
+// styl常量/函数
+// 三倍图
+$pxTorem($px) {
+  ($px/30)rem
+}
+$calc($calc-rs) {
+  $calc-rs
+}
+$hd-bar-height = $pxTorem(120)
+$bt-tab-height = $pxTorem(132)
+body 
+  background-color $bg-color
+.text_ellipsis
+  text-overflow ellipsis
+  white-space nowrap
+  overflow hidden
+.fl 
+  float left  
+.fr 
+  float right  
+.clearfix:after
+  content:""; 
+  display: block; 
+  clear:both;  
+.cursor 
+  cursor pointer 
+.q-btn 
+  box-sizing: border-box
+  display: inline-block
+  border 1px solid #cbcbcb 
+  padding $pxTorem(24) $pxTorem(148) 
+  font-size: $pxTorem(46) 
+  border-radius 3px
+  outline: none 
+  background-color #fff
+  line-height: 1
+  &.q-btn_primary 
+    background-color: $color-primary
+    color #fff
+    border none
+  &.q-btn_mini 
+    padding $pxTorem(13.5) $pxTorem(24)
+    font-size $pxTorem(32) 
+  &.q-btn_disable 
+    background-color #eaebed 
+    color #babbbd
+
+.q-avatar 
+  border-radius 50%  
+  img 
+    width 100% 
+    height 100% 
+    border-radius 50%     
+
+
+
+
+
+
+
