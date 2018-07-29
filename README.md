@@ -56,8 +56,8 @@ npm run dev
 
 
 ### 登录页面
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/login.jpg)
 
-<img src="https://github.com/Jfs007/vue-wechat/blob/master/screenshots/login.jpg width="365" height="619"/> <img src="https://github.com/bailicangdu/vue2-elm/blob/master/screenshots/msite.gif" width="365" height="619"/>
 
 
 
