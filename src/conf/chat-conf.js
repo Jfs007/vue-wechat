@@ -3,6 +3,7 @@
 
 
 export default {
+  // 正式
   production: {
     HOST: 'jfs.natapp1.cc',
     PORT: '',
