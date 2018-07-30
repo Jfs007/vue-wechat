@@ -26,7 +26,7 @@ export default {
       font-size: $pxTorem(22)
       height: $pxTorem(48);
       line-height: $pxTorem(48);
-      padding: 0 $pxTorem(16)
+      padding: 0 $pxTorem(18)
       text-align: center;
       white-space: nowrap;
       border: 1px solid #fff;

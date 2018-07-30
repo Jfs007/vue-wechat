@@ -1,7 +1,7 @@
 <template lang="pug">
   .chat-room
     hd-bar.hd-bar
-      span( slot='sec-l', @click="tap")
+      span( slot='sec-l', @click="$router.go(-1)")
         span.iconfont.icon-fanhui
       span( slot='default')
         h1.nickname {{currRoom.info&&currRoom.info.nickname}}
@@ -248,9 +248,6 @@ export default {
       })
       
     },
-    tap() {
-      this.$router.push({name: 'messages'})
-    },
     async sendMessage(content) {
       let isActive = this.currRoom.isActive;
       // 房间是否已被激活
@@ -386,7 +383,7 @@ export default {
 <style lang="stylus">
 .chat-room 
   .cube-scroll-content  
-    min-height calc(100vh- 6.9rem)
+    min-height 100%+ 1px
     // height 102vh 
 </style>
 

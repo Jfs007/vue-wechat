@@ -118,9 +118,9 @@ export default {
             font-size $pxTorem(40)
           .message-time 
             color #7f7f7f 
-        .message-bottom 
+        .message-bottom
           .message-content 
-            width $pxTorem(580)
+            width $pxTorem(489)
             color #7f7f7f
        
              

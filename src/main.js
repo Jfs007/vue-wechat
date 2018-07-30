@@ -7,8 +7,8 @@ import store from './store'
 import './router/auth'
 import './util/rem.js';
 import { dateFormat } from './util/misc';
-import { createAPI, Picker, DatePicker, CascadePicker } from 'cube-ui'
-console.log(DatePicker, CascadePicker)
+import { createAPI, Picker, DatePicker, CascadePicker, Sticky } from 'cube-ui'
+console.log(Sticky.Ele, 'CubeSticky')
 Vue.component(CascadePicker.name, CascadePicker)
 createAPI(Vue, Picker, ['select'], true)
 createAPI(Vue, CascadePicker, ['select'], false)
@@ -17,9 +17,8 @@ createAPI(Vue, DatePicker, ['select'], false)
 
 
 
+
 import { socket } from './socket/socket';
-
-
 
 console.notice = function (msg) {
   console.log('%c%s', "color: rgb(115, 182, 133)", msg)
