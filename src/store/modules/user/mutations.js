@@ -1,6 +1,7 @@
 import FriendRequest from '@/util/friendRequest';
 import TempRoom from '@/util/tempRoom.js';
 import { dateBirth } from '@/util/misc';
+
 export default {
   initUserInfo(state, info) {
     let age = dateBirth.getAge(info.birthday);
@@ -93,7 +94,7 @@ export default {
   },
 
 
-
+  
 
 
 

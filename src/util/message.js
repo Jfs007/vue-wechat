@@ -18,6 +18,9 @@ export default class Message {
     };
     return message;
   }
+  isOneself(chat, user) {
+    return chat.creater === user._id;
+  }
   message(chatRecord) {
 
     return Object.assign({
@@ -33,4 +36,33 @@ export default class Message {
       createAt: Date.now()
     }, chatRecord)
   }
+  // 消息体，房间信息，是否为私聊
+  mergeMessage(message, room, userInfo, isPrivate = true ) {
+    
+    // 
+    if(isPrivate) {
+      let isOneself = this.isOneself(message, userInfo);
+      if(isOneself) {
+        return this.message({
+          isSelf: true,
+          avatar: userInfo.avatar,
+          account: userInfo.account,
+          ownerId: userInfo._id,
+          // 消息体
+          ...message
+        })
+      }
+      if(!isOneself) {
+        return this.message({
+          isSelf: true,
+          avatar: room.info.avatar,
+          account: room.info.account,
+          ownerId: room.info._id,
+          // 消息体
+          ...message
+        })
+      }
+    }
+  }
+  
 }

@@ -12,6 +12,9 @@ export default {
   unReadRequest: 0,
   // 临时房间列表 
   tempRoomList: [],
+
+
+  tempRoomIdList: [],
   // 当前房间
   currRoom: {},
   currRoomIndex: 0,

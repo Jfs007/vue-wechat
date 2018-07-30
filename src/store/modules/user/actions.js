@@ -174,6 +174,30 @@ export default {
     // 增加未读
     commit('addUnRead', roomIndex);
   },
+
+
+
+  // 创建私聊房间
+  async createrPrivateRoom({commit, state, dispatch}, {id}) {
+    // 房间信息
+    let roomInfo = await socketEmit('getPrivateRoomInfo', {id});
+    let tempRoom = new TempRoom();
+    let room = tempRoom.createRoom({ chatType: 'private', isActive: false });
+    room.info = roomInfo.data;
+    // 拉取聊天记录
+    let chatRecords = dispatch('getPrivate', { id });
+    
+  },
+  // 添加房间私聊聊天记录
+  async getPrivate({commit, state}, info) {
+    let { id } = info;
+    let chatRecords = await socketEmit('getPrivateMsg', {
+      to: info.creater,
+      // 默认获取10条
+      limit: 10
+    });
+    return chatRecords;
+  }
   
 };
 

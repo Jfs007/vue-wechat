@@ -6,17 +6,15 @@ import router from './router'
 import store from './store'
 import './router/auth'
 import './util/rem.js';
+import './_help';
 import { dateFormat } from './util/misc';
 import { createAPI, Picker, DatePicker, CascadePicker, Sticky } from 'cube-ui'
+
 console.log(Sticky.Ele, 'CubeSticky')
 Vue.component(CascadePicker.name, CascadePicker)
 createAPI(Vue, Picker, ['select'], true)
 createAPI(Vue, CascadePicker, ['select'], false)
 createAPI(Vue, DatePicker, ['select'], false)
-
-
-
-
 
 import { socket } from './socket/socket';
 
