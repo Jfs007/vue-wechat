@@ -57,6 +57,8 @@ npm run dev
 
 ### 登录页面
 ![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/login.jpg)
+### 聊天
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat.png)
 
 
 
