@@ -1,7 +1,8 @@
 import FriendRequest from '@/util/friendRequest';
 import TempRoom from '@/util/tempRoom.js';
 import { dateBirth } from '@/util/misc';
-
+import Message from '@/util/message.js';
+let message = new Message()
 export default {
   initUserInfo(state, info) {
     let age = dateBirth.getAge(info.birthday);
@@ -24,10 +25,16 @@ export default {
     let {fieldName, value} = info;
     state.editForms[fieldName] = value;
   },
-  // 设置在想状态
+  // 设置在线状态
   setOnline(state, is) {
     state['isOnLine'] = is;
   },
+
+
+
+
+  // --------- 好友/请求部分
+
   // 初始化好友列表
   initFriendList(state, friendList) {
     friendList = friendList.map((list) => {
@@ -73,6 +80,15 @@ export default {
     req.acceptStatus = 2;
     state['friendRequest'] = [].concat([], state['friendRequest']);
   },
+
+
+
+
+
+
+
+  // -------- 关于聊天
+
   addUnReadrequest(state) {
     state.unReadRequest++;
   },
@@ -92,33 +108,29 @@ export default {
       }
     })
   },
-
-
-  
-
-
-
-
-  // -------- 聊天临时房间 
   
   // 创建房间
   newTempRoom(state, room) {
     state.tempRoomList.unshift(room);
     // 房间类型
   },
+
   // 创建房间
   createRoom(state, room) {
     state.tempRoomList.unshift(room);
   },
+
   activeRoom(state, index) {
     let room = state.tempRoomList[index];
     room.isActive = true;
     state.tempRoomList = [].concat([], state.tempRoomList);
   },
+
   // 改变房间
   changeRoom(state, index) {
     state.currRoomIndex = index;
   },
+
   // 添加未读
   addUnRead(state, index) {
     let room = state.tempRoomList[index];
@@ -129,6 +141,7 @@ export default {
     room.unread++;
     state.tempRoomList = [].concat([], state.tempRoomList);
   },
+
   // 读取消息
   readRoomMessage(state, index) {
     let room = state.tempRoomList[index];
@@ -138,20 +151,37 @@ export default {
     })
     state.tempRoomList = [].concat([], state.tempRoomList);
   },
+
   // 添加聊天记录
   addChatRecords(state, { index, chatRecord }) {
     let room = state.tempRoomList[index];
     room.chatRecords.push(chatRecord);
   },
+
   // 设置聊天记录
   setChatRecords(state, { index, chatRecords}) {
     
     let room = state.tempRoomList[index];
     room.chatRecords = chatRecords;
   },
+
   unshiftChatRecords(state, { index, chatRecords} ) {
     let room = state.tempRoomList[index];
     room.chatRecords = [...chatRecords, ...room.chatRecords];
   },
+
+  // 覆盖消息记录
+  coversChatRecord(state, { info, temp_id, chatType }) {
+    let currRoomIndex = state.currRoomIndex;
+    let room = state.tempRoomList[currRoomIndex];
+    // 当前房间聊天记录
+    let chatRecords = room.chatRecords;
+    // 查找符合的聊天记录
+    let idx = message.getMessageIndex(chatRecords, temp_id, chatType);
+    info.isLoad = false;
+    // 覆盖这条记录
+    chatRecords[idx] = info;
+    state.tempRoomList = [].concat([], state.tempRoomList)
+  }
   
 }

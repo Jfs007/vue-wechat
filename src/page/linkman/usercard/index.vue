@@ -13,7 +13,7 @@
           .user-infotop__about 
             .user-ita__nickname {{cardInfo.nickname}}
             .user-ita-persion-info 
-              span.user-ita__tag {{cardInfo.age}}岁
+              span.user-ita__tag( v-if="cardInfo.age" ) {{cardInfo.age}}岁
               span.user-ita__tag {{cardInfo.sex=== 1 ? '男': '女'}}
         .user-info__main
           q-list.user-info-list
@@ -25,7 +25,7 @@
                 span.icon.iconfont.icon-lianxiren1
               span( slot="label") 
                 | {{cardInfo.sex=== 1 ? '男': '女'}} 
-                | {{cardInfo.constellation}}座 
+                span(v-if="cardInfo.constellation") {{cardInfo.constellation}}座 
             q-item( :title="`${cardInfo.nickname}的空间`", :is-link="true") 
               span( slot="icon")
                 span.icon.iconfont.icon-QQkongjian  
@@ -39,7 +39,7 @@
 </template>
 <script>
 import { socketEmit } from '@/socket/socket'
-import {mapState, mapMutations} from 'vuex'
+import {mapState, mapMutations, mapActions} from 'vuex'
 import TempRoom from '@/util/tempRoom.js'
 import Message from '@/util/message'
 import qItem from '@/components/q-item';
@@ -75,12 +75,10 @@ export default {
   },
   
   methods: {
-    ...mapMutations('user', ['createRoom', 'changeRoom', 'setChatRecords', 'initEditUserForm']),
+    ...mapMutations('user', ['createRoom', 'setChatRecords', 'initEditUserForm']),
+    ...mapActions('user', ['changeRoom']),
     addFriend() {
       let { _id } = this.cardInfo;
-      
-      // socketEmit('addFriend', { to: _id }).then(res => {
-      // })
       this.$router.push({
         name: 'friendadd',
         params: {
@@ -99,55 +97,20 @@ export default {
     },
     async toChat() {
       let chater = this.cardInfo;
-      
-      let tempRoom = new TempRoom(this.tempRoomList);
-      let index = tempRoom.tempRoomisExit({ chatType: 'private', id: chater.id });
-      if(index>=0) {
-        this.changeRoom(index);
-        this.$router.push({
-          name: "chat",
-          params: {
-            id: chater.id
-          }
-        })
-      }else {
-        let room = tempRoom.createRoom({chatType: 'private', id: chater.id, info: chater });
-        this.createRoom(room);
-        this.changeRoom(0);
-        this.$router.push({
-          name: "chat",
-          params: {
-            id: chater.id
-          }
-        })
-        // 获取消息记录
-        let chatRecords = await socketEmit('getPrivateMsg', {
-          to: chater.id,
-          limit: 10
-        });
-        chatRecords = message.execMessage({
-          chatRecords: chatRecords.data,
-          chaterId:  chater.id,
-          userInfo: this.userInfo,
-        });
-        // 设置消息记录
-        this.setChatRecords({
-          index: 0,
-          chatRecords
-        })
-      }
+      await this.changeRoom({chatType: 'private', id: chater._id})
+      this.$router.push({
+        name: "chat",
+        params: {
+          id: chater.id
+        }
+      })
       
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
-
-
-    
 // 子页面动画效果
-
-
 .user-card  
   position relative
   background-image url('../images/login2.jpg')

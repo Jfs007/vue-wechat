@@ -29,8 +29,7 @@
               :key="message._id",
               :ref="'chat-message-box_'+index",
               v-for="(message, index) in chatRecords",
-              :is-self="message.isSelf", 
-              :message="message") 
+              :message="$mergeMessage(message, currRoom, userInfo, 'private')") 
       message-input-bar( @send="sendMessage")
 
 </template>
@@ -124,7 +123,8 @@ export default {
   },
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
-    ...mapActions('user', ['readPrivateMessage']),
+    ...mapActions('user', ['readPrivateMessage', 'sendPrivate']),
+    // bscroll 滚动事件绑定
     scrollBind() {
       scroll = this.scroll
       scroll.on('scroll', ({x, y}) => {
@@ -138,17 +138,17 @@ export default {
             this.readBeforeRoomMessage();
           }
         }
-        // 有进来后未读的消息
+        // 进来后未读的消息
         if(this.unreadAfterRoom) {
+          // 
           if(y<= scroll.maxScrollY+this.notAutoReadRang) {
             this.readAfterRoomMessage();
           }
         }
       })
     },
-    // 处理进房间后 未读的消息
     /**
-     *  
+     *  处理进房间后 未读的消息
      * 
      */
     async execUnreadBeforeRoom() {
@@ -197,6 +197,7 @@ export default {
       let unreadLastRef = 'chat-message-box_'+ this.unReadLastIndex;
       scroll.scrollToElement(this.$refs[unreadLastRef][0].$el, 250)
     },
+    // 滚动到最下面
     async scrollToBottom() {
       scroll = this.scroll;
       this.$nextTick(() => {
@@ -227,16 +228,7 @@ export default {
       let chatRecords = await socketEmit('getPrivateMsg', {to: this.currRoom.id, timestamp});
       // 获取到数据
       if(chatRecords.data.length>0) {
-        // 处理并且存到vuex
-        chatRecords = message.execMessage({
-          // 聊天数据
-          chatRecords: chatRecords.data,
-          // 聊天者id
-          chaterId:  this.currRoom.id,
-          // 用户
-          userInfo: this.userInfo
-        });
-        this.unshiftChatRecords({index: this.currRoomIndex, chatRecords});
+        this.unshiftChatRecords({index: this.currRoomIndex, chatRecords: chatRecords.data});
       
       }else {
         this.$refs.scroll.forceUpdate()
@@ -248,37 +240,18 @@ export default {
       })
       
     },
+    // 
     async sendMessage(content) {
       let isActive = this.currRoom.isActive;
       // 房间是否已被激活
       if(!isActive) {
         this.activeRoom(this.currRoomIndex);
       }
-      // 本地创建聊天数据
-      this.addChatRecords({
-        index: this.currRoomIndex,
-        chatRecord: message.message({
-          // 聊天头像
-          avatar: this.userInfo.avatar,
-          // 聊天昵称
-          nickname: this.userInfo.nickname,
-          // 聊天内容
-          content: content,
-          // 消息人的id
-          id: this.userInfo.id,
-          // 消息人的账号
-          account: this.userInfo.account
-        })
-      });
-      // 发送私聊消息
-      let msg = await socketEmit('privateMessage', { 
-        // 聊天内容
+      this.sendPrivate({
+         // 聊天内容
         content: content, 
-        // 聊天房间id
-        to: this.currRoom.id, 
-        // 聊天类型
-        type: this.currRoom.chatType
-      });
+        creater: this.userInfo.id, 
+      })
       this.scrollToBottom();
 
     }

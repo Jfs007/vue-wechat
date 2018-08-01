@@ -18,6 +18,19 @@ export default class Message {
     };
     return message;
   }
+
+  getMessageIndex(messages, _id, chatType) {
+    let index = 0;
+    messages.find((message, idx) => {
+      console.log(message._id, _id, 'message,,,,', message.chatType, chatType)
+      if (message.chatType === chatType && message._id === _id) {
+        console.log(message._id, _id)
+        index = idx;
+        return true;
+      }
+    });
+    return index;
+  }
   isOneself(chat, user) {
     return chat.creater === user._id;
   }
@@ -33,35 +46,46 @@ export default class Message {
       // 已读 1 未读 0
       status: 1,
       timestamp: Date.now(),
-      createAt: Date.now()
+      createAt: Date.now(),
+      isLoad: false,
+      _id: 'temp'+ Date.now()
     }, chatRecord)
   }
   // 消息体，房间信息，是否为私聊
   mergeMessage(message, room, userInfo, isPrivate = true ) {
-    
     // 
     if(isPrivate) {
       let isOneself = this.isOneself(message, userInfo);
       if(isOneself) {
-        return this.message({
+        message = this.message({
           isSelf: true,
           avatar: userInfo.avatar,
           account: userInfo.account,
           ownerId: userInfo._id,
           // 消息体
           ...message
-        })
+        });
+        console.log(message, 'message')
+        return message;
       }
       if(!isOneself) {
-        return this.message({
-          isSelf: true,
+        message = this.message({
+          isSelf: false,
           avatar: room.info.avatar,
           account: room.info.account,
           ownerId: room.info._id,
           // 消息体
           ...message
-        })
+        });
+        console.log(message, 'messageNotSelf')
+        return message
       }
+    }
+  }
+  // 消息体转化
+  messageify(message) {
+    return {
+      
     }
   }
   

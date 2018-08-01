@@ -91,6 +91,7 @@ export default {
     initPicker() {
       this.genderPick = this.$createPicker({
       title: ' ',
+      selectedIndex: this.sex === '男' ? [0] : [1],
       data: [[{ text: '男', value: 1}, { text: '女', value: 0}]],
       onSelect: (selectedVal, selectedIndex, selectedText) => {
         this.setEditUserField({ fieldName: 'sex', value: selectedVal[0] });

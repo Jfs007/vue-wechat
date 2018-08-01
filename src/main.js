@@ -38,7 +38,7 @@ socket.on('rejectFriend', (res) => {
 })
 socket.on('message', (info) => {
   console.notice('message')
-  store.dispatch('user/getNewPrivateMessage', info.data)
+  store.dispatch('user/newPrivateMessage', info.data)
   // store.dispatch('user/createRoom')
 })
 
@@ -49,7 +49,7 @@ socket.on('close', () => {
   console.notice('close');
 })
 socket.on('offline', (res) => {
-  console.log(`该用户${res.userid}下线了`)
+  console.notice(`该用户${res.userid}下线了`)
 })
 
 

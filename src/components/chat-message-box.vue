@@ -2,10 +2,10 @@
 
 div
   div.chat-message-box
-    div.chat-message_is-chat( :class="[isSelf? 'one-self': '']", v-if="message.msgType === 0" )
+    div.chat-message_is-chat( :class="[message.isSelf? 'one-self': '']", v-if="message.msgType === 0" )
       div.q-avatar
         img( :src="message.avatar", @click="$router.push({name: 'usercard', params: { account: message.account }})")
-      div.message {{message.content}}
+      div.message {{message.isLoad ? 'load...' : ''}}   {{message.content}} 
     div.chat-message_is-system( v-else ) 
       .chat-message__tag {{message.content}}
 </template>
@@ -13,10 +13,6 @@ div
 export default {
   name: 'chat-message-box',
   props: {
-    isSelf: {
-      type: Boolean,
-      default: true
-    },
     info: {
       type: Object,
       default() {

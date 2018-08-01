@@ -28,6 +28,7 @@ export default class tempRoom {
     // 未读
     unread: 0,
     chatRecords: [],
+    chatRecordsIds: [],
     id: null,
     // 房间是否为新的房间
     isNewRoom: true,
