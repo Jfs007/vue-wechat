@@ -4,18 +4,23 @@
       span( slot='sec-l', @click="$router.go(-1)")
         span.iconfont.icon-fanhui
       span( slot='default')
-        h1.nickname {{currRoom.info&&currRoom.info.nickname}}
+        h1.nickname {{currRoom.info&&currRoom.info.nickname||currRoom.info.name}}
         p.online-type [{{currRoom.info&&currRoom.info.device}}在线]
       span.hd-bar__right( slot="sec-r")
         span.iconfont.icon-yonghu( @click="$router.push({name: 'usercard', params: { account: userInfo.account}})" )
     .chat-room-wapper
       div.wapper
-        .chat-room__newmsg-tag( @click="scrollToLastMessage", v-if="unreadBeforeRoom>0")
-          .semi-circle
-          .newmsg-box
-            .newmsg-tag__icon 
-            span.newsg-tag__text {{unreadBeforeRoom}} 条新消息
-            span.iconfont.icon-shang
+        transition( 
+          name="custom-classes-transition",
+          enter-active-class="animated fadeInRight",
+          leave-active-class="animated fadeOutRight")
+          .chat-room__newmsg-tag( @click="scrollToLastMessage", v-if="unreadBeforeRoom>0&&delayUnReadTag" )
+            .semi-circle
+            .newmsg-box
+              .newmsg-tag__icon 
+                span.iconfont.icon-xiaoxi1
+              span.newsg-tag__text {{unreadBeforeRoom}} 条新消息
+              span.iconfont.icon-shang
         .chat-room__unread-ball( v-if="unreadAfterRoom>0", @click="scrollToBottom") 
           span {{unreadAfterRoom}}  
         cube-scroll(
@@ -25,18 +30,18 @@
           :data="chatRecords"
           )
           .chat-room-content
-            chat-message-box( 
+            dialogue-wrap( 
               :key="message._id",
               :ref="'chat-message-box_'+index",
               v-for="(message, index) in chatRecords",
-              :message="$mergeMessage(message, currRoom, userInfo, 'private')") 
+              :message="$mergeMessage(message, currRoom, userInfo, roomType !== 'group')") 
       message-input-bar( @send="sendMessage")
 
 </template>
 <script>
 import hdBar from '@/components/hd-bar'
 import messageInputBar from '@/components/message-input-bar'
-import chatMessageBox from '@/components/chat-message-box'
+import dialogueWrap from '@/components/chat/dialogue-wrap'
 import { Scroll } from 'cube-ui'
 import { socketEmit, socket } from '@/socket/socket';
 import {mapState, mapMutations, mapActions } from 'vuex'
@@ -46,12 +51,13 @@ let message = new Message();
 export default {
   components: {
     hdBar,
-    chatMessageBox,
+    dialogueWrap,
     cubeScroll: Scroll,
     messageInputBar
   },
   data() {
     return {
+      // bscroll的一些配置，，没什么好说的
       options: {
         scrollbar: true,
         scrollbarFade: true,
@@ -60,27 +66,26 @@ export default {
         },
         pullDownRefreshThreshold: 90,
         pullDownRefreshStop: 40,
-        // pullUpLoad: true,
         pullUpLoadThreshold: 0,
-        // startY: 0,
-      
+        
       },
-      message: '',
       // 房间的序号
       // 不自动读消息的范围
       notAutoReadRang: 110,
       /**
        * 进房间的时候 超过多少条显示新消息
        */
-      unReadBeyondNum: 15,
-      // 
+      unReadBeyondNum: 5,
+      // 最早没有读的那条消息
       unReadLastIndex: 0,
       // 在进房间后未读的消息
       unreadAfterRoom: 0,
       // 在进房间前未读的消息
       unreadBeforeRoom: 0,
       // bScroll的 对象实例 (不是bscroll组件实例)
-      scroll: null
+      scroll: null,
+      // 没太多卵用，，目的就是做个flag，，当为true的时候显示右上角未读新消息的tag
+      delayUnReadTag: false,
       
     }
   },
@@ -93,6 +98,9 @@ export default {
       let chatRecords = this.currRoom.chatRecords;
       return chatRecords;
     },
+    roomType() {
+      return this.$route.query.roomType;
+    }
   },
   watch: {
     // chatRecords(newChat, oldChat) {
@@ -102,6 +110,9 @@ export default {
   },
   created() {
     this.unreadBeforeRoom = this.currRoom.unread;
+    setTimeout(() => {
+      this.delayUnReadTag = true;
+    }, 360);
   },
   mounted() {
     this.$nextTick(() => {
@@ -111,19 +122,21 @@ export default {
       this.scrollBind();
       this.scrollToBottom();
     });
-    socket.on('message', this.execAfterRoomNewMsg);
+    socket.on('message.room', this.execAfterRoomNewMsg);
+    socket.on('message.private', this.execAfterRoomNewMsg);
     
   },
   beforeDestroy() {
     this.readPrivateMessage(this.currRoomIndex);
-    socket.off('message', this.execAfterRoomNewMsg);
+    socket.off('message.room', this.execAfterRoomNewMsg);
+    socket.off('message.private', this.execAfterRoomNewMsg);
     this.scroll.destroy();
     this.scroll = null;
     
   },
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
-    ...mapActions('user', ['readPrivateMessage', 'sendPrivate']),
+    ...mapActions('user', ['readPrivateMessage', 'sendPrivate', 'sendRoom']),
     // bscroll 滚动事件绑定
     scrollBind() {
       scroll = this.scroll
@@ -189,13 +202,16 @@ export default {
           this.unreadAfterRoom++;
         }
       })
+      
     },
     // 滚动到最早未读的的那条消息
     async scrollToLastMessage() {
       scroll = this.scroll;
       this.readBeforeRoomMessage();
       let unreadLastRef = 'chat-message-box_'+ this.unReadLastIndex;
-      scroll.scrollToElement(this.$refs[unreadLastRef][0].$el, 250)
+      scroll.scrollToElement(this.$refs[unreadLastRef][0].$el, 250);
+     
+      
     },
     // 滚动到最下面
     async scrollToBottom() {
@@ -211,25 +227,33 @@ export default {
     },
     // 读进房间前的未读新消息
     async readBeforeRoomMessage() {
+      this.delayUnReadTag = false;
       this.unreadBeforeRoom = 0;
+      // 暂时不做读取 群聊类型消息
       this.readPrivateMessage(this.currRoomIndex);
     },
     // 读进房间后的未读新消息
     async readAfterRoomMessage() {
       this.unreadAfterRoom = 0;
+      // 暂时不做读取 群聊类型消息
       this.readPrivateMessage(this.currRoomIndex);
     },
     // 上拉加载聊天信息
     async loadMessage() {
+
+
       let timestamp = this.chatRecords[0] ?  this.chatRecords[0].timestamp: Date.now()
       let scroll = this.$refs['scroll'].scroll;
       let maxScrollY = scroll.maxScrollY;
-      // 服务器获取私聊消息
-      let chatRecords = await socketEmit('getPrivateMsg', {to: this.currRoom.id, timestamp});
+      let chatRecords = null;
+      if(this.roomType === 'group') {
+        chatRecords = await socketEmit('getRoomHistory', {roomid: this.currRoom.id, timestamp })
+      }else {
+        chatRecords = await socketEmit('getPrivateMsg', {to: this.currRoom.id, timestamp});
+      }
       // 获取到数据
       if(chatRecords.data.length>0) {
         this.unshiftChatRecords({index: this.currRoomIndex, chatRecords: chatRecords.data});
-      
       }else {
         this.$refs.scroll.forceUpdate()
       }
@@ -247,11 +271,13 @@ export default {
       if(!isActive) {
         this.activeRoom(this.currRoomIndex);
       }
-      this.sendPrivate({
-         // 聊天内容
+      let send = this.roomType === 'private' ? this.sendPrivate.bind(this): this.sendRoom.bind(this)
+      send({
+        // 聊天内容
         content: content, 
         creater: this.userInfo.id, 
-      })
+        // user: this.userInfo.id,
+      });
       this.scrollToBottom();
 
     }
@@ -260,6 +286,8 @@ export default {
 
 }
 </script>
+
+
 <style lang="stylus" scoped>
   .chat-room 
     background-color #f1f2f7
@@ -283,6 +311,7 @@ export default {
       display flex 
       flex-direction column
       .chat-room__newmsg-tag 
+        transform translate3d(0, 0, 0)
         position absolute 
         top $pxTorem(48) 
         right 0 
@@ -322,6 +351,10 @@ export default {
             left 0
             background-color #16b8e8
             transform translate3d(-50%, -50%, 0)
+            color #ffffff 
+            line-height $pxTorem(80)
+            font-size $pxTorem(60)
+            text-align center
           .newsg-tag__text  
             margin-left $pxTorem(52)
             margin-right $pxTorem(20)
@@ -357,6 +390,8 @@ export default {
 .chat-room 
   .cube-scroll-content  
     min-height 100%+ 1px
+  .animated 
+    animation-duration: .25s;
     // height 102vh 
 </style>
 

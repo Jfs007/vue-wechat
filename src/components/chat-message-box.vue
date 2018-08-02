@@ -36,7 +36,6 @@ export default {
       .q-avatar
         height $pxTorem(100) 
         width $pxTorem(100) 
-        
       .message 
         margin 0 $pxTorem(20)
         max-width $pxTorem(572) 

@@ -6,6 +6,8 @@ export default {
   isOnLine: false,
   // 好友列表
   friendList: [],
+  // 房间列表
+  roomList: [],
   // 好友请求列表
   friendRequest: [],
   // 未读的好友请求

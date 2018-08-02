@@ -1,6 +1,6 @@
-import axios from 'axios'
+import axios from './axios'
 import gdConf from '@/conf/gd-conf';
-const { GD_KEY, GD_URL }  = gdConf;
+const { GD_KEY, GD_URL } = gdConf;
 // 
 
 export let getCity = (params) => {
@@ -19,3 +19,5 @@ export let getWeather = (params) => {
     }
   })
 }
+
+

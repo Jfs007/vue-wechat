@@ -60,7 +60,19 @@ body
   img 
     width 100% 
     height 100% 
-    border-radius 50%     
+    border-radius 50%    
+@keyframes qrotating
+  0% 
+    transform: rotate(0deg);
+  100% 
+    transform: rotate(1turn);
+
+.q-rotating
+  animation qrotating 2s linear infinite
+  text-align: center
+
+
+       
 
 
 

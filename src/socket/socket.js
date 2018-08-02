@@ -1,7 +1,7 @@
-import chatConf from '../conf/chat-conf'
+import env from '../conf/env'
 import io from 'socket.io-client'
 import router from '../router/index';
-const chat_conf_env = process.env.NODE_ENV === 'development' ? chatConf.development: chatConf.production;
+const chat_conf_env = process.env.NODE_ENV === 'development' ? env.development : env.production;
 let socket = io(
   `ws://${chat_conf_env.HOST}:${chat_conf_env.PORT}`,
   {

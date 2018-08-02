@@ -22,8 +22,9 @@
             :loop="false", 
             :initial-index="initialIndex" )  
             cube-slide-item 
-              chat-friend
+              chat-friend.min-h_1
             cube-slide-item
+              group-room.min-h_1
             cube-slide-item  
             cube-slide-item
             cube-slide-item
@@ -35,6 +36,7 @@ import {getRootOffset} from '@/util/dom.js'
 import btTab from '@/components/bt-tab'
 import hdBar from '@/components/hd-bar'
 import chatFriend from '@/components/linkman/friend.vue';
+import groupRoom from '@/components/linkman/grouproom.vue';
 import {mapActions, mapState } from 'vuex';
 import qItem from '@/components/q-item';
 import qList from '@/components/q-list';
@@ -49,6 +51,7 @@ export default {
     cubeSlideItem: Item,
     cubeScroll: Scroll,
     chatFriend,
+    groupRoom,
     btTab, 
     hdBar, 
     dot,
@@ -89,12 +92,11 @@ export default {
     
   },
   created() {
-    this.initFriendList();
   },
   mounted() {
   },
   methods: {
-    ...mapActions('user', ['initFriendList', 'createRoom']),
+    ...mapActions('user', ['createRoom']),
     toUserCard(chater) {
       this.$router.push({
         name: 'usercard',
@@ -118,6 +120,9 @@ export default {
     .chat-targets
       margin-top $pxTorem(24)
       background-color #fff 
+    .chat-targets-container
+      .min-h_1
+        min-height 1px   
   
 </style>
 <style lang="stylus">
@@ -133,7 +138,7 @@ export default {
       height $pxTorem(10)
     .cube-scroll-content 
       min-height 100vh 
-      padding-bottom $pxTorem(429)  
+      padding-bottom $pxTorem(429) 
 
 </style>
 

@@ -20,7 +20,7 @@ export default class tempRoom {
  // 是否为当前房间
  isCurrentRoom(info, currRoom) {
    let { chatType, id} = info;
-   return currRoom.chatType === chatType && currRoom.id === id;
+   return currRoom.chatType === chatType && currRoom.id == id;
  }
  room(option) {
   let defaultRoom = {

@@ -31,8 +31,10 @@ export default {
       // 没有关闭侧边栏 就不启用css 
       this.bindCss = !this.slideBarIsShow;
       if(this.transition) { this.transitionName = this.transition; return; };
-      // 不存在tier属性的时候 效果为淡入淡出
-      if(!('page' in to.meta)&&!('page' in from.meta)) {console.log('..'); this.transitionName = transition_prefix+ 'fade';  return;};
+      // 不存在page属性的时候( 表示非级 ) 效果为淡入淡出
+      if(!('page' in to.meta)&&!('page' in from.meta)) {
+        this.transitionName = transition_prefix+ 'fade';  return;
+      };
       if(to.meta.tier > from.meta.tier){
         //设置动画名称
         this.transitionName = transition_prefix+ 'in';
@@ -65,7 +67,10 @@ export default {
     
   // 淡入淡出 动画  
   .page-view-fade-enter-active, .page-view-fade-leave-active  
-    animation opacity .15s;
+    transition opacity 0.45s;
+    position absolute
+    left 0
+    top 0
   .page-view-fade-enter,
   .page-view-fade-leave-to
     opacity 0

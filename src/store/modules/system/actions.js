@@ -1,4 +1,4 @@
-import { getCity, getWeather } from '@/api'
+import { getCity, getWeather } from '@/api/gdmap.js'
 export default {
   async setWeather({commit}, params) {
     let rs = await getCity(params);

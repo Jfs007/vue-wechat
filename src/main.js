@@ -28,7 +28,7 @@ socket.on('friendRequest', (res) => {
 });
 socket.on('agreeFriend', (res) => {
   router.push({name: 'messages'});
-  
+  store.dispatch('user/initRequestList');
   
 })
 socket.on('rejectFriend', (res) => {
@@ -36,11 +36,17 @@ socket.on('rejectFriend', (res) => {
   store.commit('user/addUnReadrequest');
   // router.push({name: 'messages'})
 })
-socket.on('message', (info) => {
+socket.on('message.private', (info) => {
   console.notice('message')
+  console.log(info, 'info')
   store.dispatch('user/newPrivateMessage', info.data)
   // store.dispatch('user/createRoom')
+});
+socket.on('message.room', (info) => {
+  console.log(info, 'info.....message.room')
+  store.dispatch('user/newRoomMessage', info.data)
 })
+
 
 socket.on('disconnect', () => {
   console.notice('disconnect')
@@ -74,7 +80,7 @@ const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 
-Vue.filter('tformat', (value) => { return dateFormat(typeof value === 'string' ? new Date(value) : new Date(), 'hh:mm')})
+Vue.filter('tformat', (value) => { return dateFormat(typeof value === 'number' ? new Date(value) : new Date(), 'hh:mm')})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

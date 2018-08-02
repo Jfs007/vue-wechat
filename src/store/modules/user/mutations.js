@@ -12,7 +12,7 @@ export default {
   initEditUserForm(state) {
     let userInfo = state.userInfo;
     state.editForms = Object.assign({
-      avatar: userInfo.avatar,
+      // avatar: userInfo.avatar,
       signature: userInfo.signature,
       nickname: userInfo.nickname,
       sex: userInfo.sex,
@@ -41,12 +41,17 @@ export default {
       return {
         addAt: list.addAt,
         ...list.friend,
+        // 昵称
         remarkname: list.remarkname,
         id: list.friend._id
       }
     })
     state['friendList'] = friendList;
   },
+  // 初始化房间列表
+  initRoomList(state, rooms) {
+    state.roomList = rooms;
+  }, 
   // 好友请求列表
   initRequestList(state, List) {
     // 用户
@@ -180,6 +185,7 @@ export default {
     let idx = message.getMessageIndex(chatRecords, temp_id, chatType);
     info.isLoad = false;
     // 覆盖这条记录
+    console.log(chatRecords, idx, '....!!!!')
     chatRecords[idx] = info;
     state.tempRoomList = [].concat([], state.tempRoomList)
   }

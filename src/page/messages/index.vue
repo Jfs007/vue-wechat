@@ -14,8 +14,8 @@
                 img( :src="room.info.avatar")
               div.message-info
                 .message-top.clearfix
-                  div.message-fromer.fl {{room.info.nickname}}
-                  div.message-time.fr {{newestMsg(room, index).createAt| tformat }}
+                  div.message-fromer.fl {{room.info.nickname||room.info.name}}
+                  div.message-time.fr {{newestMsg(room, index).timestamp| tformat }}
                 .message-bottom    
                   p.message-content.text_ellipsis.fl {{newestMsg(room).content }}
                   dot.fr( :num="room.unread", v-show="room.unread>0")
@@ -58,11 +58,15 @@ export default {
   methods: {
    ...mapMutations('user', ['changeRoom']),
    toChatRoom(room, index) {
+     let roomType = room.chatType;
      this.changeRoom(index);
      this.$router.push({
        name: 'chat',
        params: {
         id: room.id
+       },
+       query: {
+         roomType
        }
        
      })

@@ -74,7 +74,7 @@ export default {
   .bt-tab-bar 
     box-sizing border-box
     width 100%
-    position fixed
+    position absolute
     bottom 0 
     z-index 40 
     left 0 
