@@ -6,7 +6,7 @@
 
 </template>
 <script>
-import {avatarUplad} from '@/api/upload';
+import {avatarUpload} from '@/api/upload';
 export default {
   props: {
     url: String
@@ -30,13 +30,9 @@ export default {
       };
       let formData = new FormData()
       formData.append('avatar', file);
-      let ret = await avatarUplad(formData);
-      console.log(ret, 'ret')
+      let ret = await avatarUpload(formData);
       // this.$refs['fileUpload'].click();
     },
-    getBase64() {
-
-    }
   }
 }
 </script>

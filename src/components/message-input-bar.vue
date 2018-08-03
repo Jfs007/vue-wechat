@@ -9,11 +9,16 @@
 
       ) 发送
     div.messsage-tools 
-      div.message-tool__icon  
+      div.message-tool__icon
         span.iconfont.icon-biaoqing
-  
+      div.message-tool__icon
+        input( type="file", @change="sendFileHandle" ).upload-input 
+        span.iconfont.icon-image
+
 </template>
 <script>
+import {mapActions} from 'vuex'
+import Upload from '@/util/upload';
 export default {
   data() {
     return {
@@ -26,10 +31,35 @@ export default {
     }
   },
   methods: {
-    sendMessage() {
+    // sendFile
+    ...mapActions('user', ['sendFile', 'sendTextMessage']),
+    async sendMessage() {
       if(this.isDisable) return;
-      this.$emit('send', this.message);
-      this.message = '';
+      let message = this.message;
+      this.message = ''
+      await this.sendTextMessage({
+        // 聊天内容
+        content: message, 
+        type: 'text',
+        createCallback: () => {
+          this.$emit('send', 'text');
+        }
+      });
+      
+    },
+    async sendFileHandle(e) {
+      let files = e.target.files;
+      let file = files[0];
+      let fileObj = new Upload(file);
+      // if(fileObj)
+      // 类型判断器具
+      await this.sendFile({ 
+        fileObj, type: 'image', 
+        createCallback: () =>{
+          this.$emit('send', 'file')
+        } 
+      })
+      
     }
   }
 }
@@ -75,6 +105,15 @@ export default {
       padding 0 $pxTorem(15)     
       font-size $pxTorem(54)
       color #818392 
+      position relative
+      text-align center
+      .upload-input 
+        position absolute 
+        width 100% 
+        height 100%
+        z-index 10
+        opacity 1
+        font-size 0
 </style>
 
 

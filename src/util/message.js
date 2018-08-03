@@ -1,12 +1,11 @@
 export default class Message {
   
-
-  getMessageIndex(messages, _id, chatType) {
+  // 根据传入的mark_id和消息比较，获得相同的那条消息
+  getMessageIndex(messages, mid) {
     let index = 0;
     messages.find((message, idx) => {
-      console.log(message._id, _id, 'message,,,,', message.chatType, chatType)
-      if (message.chatType === chatType && message._id === _id) {
-        console.log(message._id, _id)
+      let mark_id = message.mark_id || message._id;
+      if (mark_id === mid) {
         index = idx;
         return true;
       }
@@ -17,7 +16,6 @@ export default class Message {
     return id === user._id;
   }
   message(chatRecord) {
-
     return Object.assign({
       content: '',
       isSelf: true,
@@ -28,39 +26,60 @@ export default class Message {
       // timestamp: Date.now(),
       // createAt: Date.now(),
       isLoad: false,
-      _id: 'temp'+ Date.now()
+      /** 
+       * 标识该消息的唯一id， _id也是唯一id，不同的是该mark_id可能由本地产生，没有的时候自动被mergeMessage转化为_id
+       * 作用在于无论服务器是否接受到数据都能指定该消息为唯一，，有效防止vue对其更新
+       * 
+      */
+      mark_id: '',
+      // 消息类型 text/image/file 目前三种类型
+      type: 'text',
+      // 该消息的唯一id，由服务器产生
+      _id: '',
     }, chatRecord)
+
   }
-  // 消息体，房间信息，是否为私聊
-  mergeMessage(message, room, userInfo, isPrivate = true ) {
-    // 不是私聊的情况
-    if(!isPrivate) {
-      let isOneself = this.isOneself(message.creater._id, userInfo);
-      message.isSelf = isOneself;
-      return this.message(message);
-    }
-    let isOneself = this.isOneself(message.creater, userInfo);
-    if(isOneself) {
-      message = this.message({
-        // 消息体
-        ...message,
-        isSelf: true,
-        creater: userInfo,
-        
-      });
+  // 消息体，房间信息，是否为私聊 对后端传入的数据进行分析并且合并
+  mergeMessage(message, room, userInfo ) {
+    let creater = message.creater;
+    let isPrivate = room.chatType === 'private';
+    // 获取id
+    let createrId = creater._id ? creater._id : creater;
+    // 比较是否为自己
+    let isOneSelf = this.isOneself(createrId, userInfo);
+    message.isSelf = isOneSelf;
+    // 是否有mark_id标识，没有就用_id指定
+    if(!message.mark_id) message.mark_id = message._id;
+    // 群聊 直接返回
+    if (!isPrivate) {
       return message;
+    };
+    // 非群聊判断creater是否被合并过 根据是否为自己获取创建消息者信息
+    let createrInfo = isOneSelf ? userInfo: room.info;
+    if(!creater._id) {
+      message.creater = createrInfo;
     }
-    if(!isOneself) {
-      message = this.message({
-        // 消息体
-        ...message,
-        isSelf: false,
-        creater: room.info,
-       
-      });
-      return message
-    }
-  
+    return message;
+  }
+  /**
+   * 创建消息
+   * content 消息内容
+   * creater 消息创建者 Object
+   * type 消息类型 text/image/file
+   * 
+   */
+  createMessage({ content, creater, type }) {
+    if(!creater) throw new Error('未指定消息创建人')
+    // 创建消息
+    return this.message({
+      creater,
+      isSelf: true,
+      isLoad: true,
+      content,
+      type ,
+      // 创建临时标示
+      mark_id: 'tmp'+ Date.now()
+    })
   }
   // 消息体转化
   messageify(message) {

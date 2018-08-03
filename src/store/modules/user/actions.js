@@ -2,10 +2,12 @@ import { socketEmit } from '@/socket/socket'
 import browser from '@/util/browser.js';
 import TempRoom from '@/util/tempRoom.js'
 import Message from '@/util/message.js';
+import { fileUpload } from '@/api/upload' 
 let message = new Message();
 
 export default {
   // 关于用户
+
   // 上线
   async online({ commit, state, dispatch }) {
     if (state.isOnLine) return;
@@ -29,17 +31,23 @@ export default {
       
     }
   },
+
   // 刷新用户资料
   async freshUserInfo({state, commit}) {
     let userInfo = await socketEmit('getUserInfo', { id: state.userInfo._id });
     commit('initUserInfo', userInfo.data.user);
   },
   async offline({state, commit}) {
-    await socketEmit('offline');
-    commit('setOnline', false);
-    commit('initUserInfo', []);
-    localStorage.removeItem('_token');
-    return;
+    try {
+      await socketEmit('offline');
+      commit('setOnline', false);
+      commit('initUserInfo', []);
+      localStorage.removeItem('_token');
+      return 
+    } catch (error) {
+      return error
+    }
+    
   },
   async updateUser({state, dispatch}) {
     let forms = state.editForms;
@@ -119,7 +127,6 @@ export default {
         });
         let firstChat = chatRecords.data[0];
         room.lastUnReadMessage = firstChat.timestamp;
-        console.log(firstChat, 'firstChat');
         room.chatRecords = chatRecords.data;
         room.unread = roomToMessage[id];
         commit('createRoom', room);
@@ -184,11 +191,8 @@ export default {
 
   async newRoomMessage({ commit, state, dispatch }, info) {
     let { roomid } = info;
-    console.log(roomid, 'roomid')
     let tempRoom = new TempRoom(state.tempRoomList);
-    console.log(roomid, 'roomid.................')
     let index = tempRoom.tempRoomisExit({ chatType: 'group', id: roomid });
-    console.log(info, '.....', index, '0000')
     if (index < 0) {
       index = 0;
       let room = await dispatch('createrRoom', { isActive: true, id: roomid });
@@ -250,9 +254,7 @@ export default {
   async createrRoom({commit}, {id, isActive}) {
     let roomInfo = await socketEmit('getRoomInfo', {roomid: id});
     let tempRoom = new TempRoom();
-    console.log(id, 'id.....')
     let room = tempRoom.createRoom({ chatType: 'group', isActive, id });
-    console.log(room, 'room')
     room.info = roomInfo.data ;
     return room;
   },
@@ -272,7 +274,7 @@ export default {
     return room;
   },
   // 添加房间私聊聊天记录
-  async getPrivate({commit, state}, info) {
+  async getPrivate({ commit, state }, info) {
     let { id, limit } = info;
     limit = limit || 10;
     let chatRecords = await socketEmit('getPrivateMsg', {
@@ -282,53 +284,108 @@ export default {
     });
     return chatRecords.data;
   },
+  /**
+   * 
+   * @param {*} param0 
+   * 
+   * fileObj 经过 Upload.js包装过的文件对象  见@/util/upload
+   * createCallback 创建完消息的回调
+   */
+  async sendFile({ commit, state, dispatch }, { fileObj, type, chatType, creater, createCallback }) {
+    let room = state.tempRoomList[state.currRoomIndex];
+    let isActive = room.isActive;
+    // 房间是否已被激活
+    if (!isActive) {
+      commit('activeRoom', state.currRoomIndex);
+    }
+    creater = creater || state.userInfo;
+    // 创建一条指定type的空消息
+    let msg = message.createMessage({ isLoad: true, type, creater });
+    let dataURL = await fileObj.getDataURL();
+    if(type === 'image') {
+      msg.content = dataURL;
+    }
+    if(type === 'file') {
+      msg.content = '';
+    }
+    // 创建出消息的临时id
+    let temp_id = msg.mark_id;
+    commit('addChatRecords', {
+      index: state.currRoomIndex,
+      chatRecord: msg
+    });
+    createCallback && createCallback();
+    let fileUrlRet = await fileUpload(fileObj.uploadPre(type));
+    let fileUrl = fileUrlRet.data.src;
+    if (room.chatType === 'private') {
+      msg = await socketEmit('privateMessage', {
+        // 聊天内容
+        content: fileUrl,
+        // 聊天房间id
+        to: room.id,
+        type
+      });
+    }
+    if (room.chatType === 'group') {
+      msg = await socketEmit('roomMessage', {
+        // 聊天内容
+        content: fileUrl,
+        // 聊天房间id
+        roomid: room.id,
+        type
+      });
+    };
+    // 不改变 
+    msg.data.content = fileUrl;
+    commit('coversChatRecord', { info: msg.data, temp_id });
+    // let msg = message.message({ isLoad: true, type })
+  },
 
+  
+  // 发送文本消息
+  async sendTextMessage({ commit, state, dispatch }, { content, creater, type, createCallback }) {
+    let room = state.tempRoomList[state.currRoomIndex];
+    let isActive = room.isActive;
+    // 房间是否已被激活
+    if (!isActive) {
+      commit('activeRoom', state.currRoomIndex);
+    }
+    creater = creater || state.userInfo;
+    let msg = message.createMessage(
+      {
+        content,
+        creater,
+        type: 'text'
+      }
+    );
+    // 添加聊天记录
+    commit('addChatRecords', {
+      index: state.currRoomIndex,
+      chatRecord: msg
+    });
+    createCallback && createCallback()
+    // 创建出消息的临时id
+    let temp_id = msg.mark_id;
+    if(room.chatType === 'private') {
+      msg = await socketEmit('privateMessage', {
+        // 聊天内容
+        content: msg.content,
+        // 聊天房间id
+        to: room.id
+      });
+    }
+    if(room.chatType === 'group') {
+      msg = await socketEmit('roomMessage', {
+        // 聊天内容
+        content: msg.content,
+        // 聊天房间id
+        roomid: room.id,
+      });
+    };
+    commit('coversChatRecord', { info: msg.data, temp_id });
+
+  },
   // 发送私聊消息
-  async sendPrivate({commit, state, dispatch}, info) {
-    let msg = message.message({ ...info, isLoad: true, chatType: 'private' });
-    // 添加聊天记录
-    commit('addChatRecords', {
-      index: state.currRoomIndex,
-      chatRecord: msg
-    });
-    let room = state.tempRoomList[state.currRoomIndex];
-    let temp_id = msg._id;
-    msg = await socketEmit('privateMessage', {
-      // 聊天内容
-      content: msg.content,
-      // 聊天房间id
-      to: room.id,
-      // 聊天类型
-      type: 'private'
-    });
-    commit('coversChatRecord', { info: msg.data, temp_id, chatType: 'private' });
-  },
-
-  // 发送群房间消息
-  async sendRoom({ commit, state, dispatch }, info) {
-    let userInfo = state.userInfo;
-    let msg = message.message({ 
-      ...info, 
-      creater: userInfo,
-      isLoad: true, 
-      chatType: 'group' });
-    // 添加聊天记录
-    commit('addChatRecords', {
-      index: state.currRoomIndex,
-      chatRecord: msg
-    });
-    let room = state.tempRoomList[state.currRoomIndex];
-    let temp_id = msg._id;
-    msg = await socketEmit('roomMessage', {
-      // 聊天内容
-      content: msg.content,
-      // 聊天房间id
-      roomid: room.id,
-      // 聊天类型
-      type: 'group'
-    });
-    commit('coversChatRecord', { info: msg.data, temp_id, chatType: 'group' });
-  },
   
 };
 

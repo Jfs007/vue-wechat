@@ -31,11 +31,11 @@
           )
           .chat-room-content
             dialogue-wrap( 
-              :key="message._id",
+              :key="message.mark_id",
               :ref="'chat-message-box_'+index",
               v-for="(message, index) in chatRecords",
               :message="$mergeMessage(message, currRoom, userInfo, roomType !== 'group')") 
-      message-input-bar( @send="sendMessage")
+      message-input-bar( @send="send")
 
 </template>
 <script>
@@ -136,7 +136,7 @@ export default {
   },
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
-    ...mapActions('user', ['readPrivateMessage', 'sendPrivate', 'sendRoom']),
+    ...mapActions('user', ['readPrivateMessage', 'sendTextMessage']),
     // bscroll 滚动事件绑定
     scrollBind() {
       scroll = this.scroll
@@ -264,22 +264,12 @@ export default {
       })
       
     },
+   
     // 
-    async sendMessage(content) {
-      let isActive = this.currRoom.isActive;
-      // 房间是否已被激活
-      if(!isActive) {
-        this.activeRoom(this.currRoomIndex);
-      }
-      let send = this.roomType === 'private' ? this.sendPrivate.bind(this): this.sendRoom.bind(this)
-      send({
-        // 聊天内容
-        content: content, 
-        creater: this.userInfo.id, 
-        // user: this.userInfo.id,
-      });
-      this.scrollToBottom();
-
+    async send(content) {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      })
     }
     
   }

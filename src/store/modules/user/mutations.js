@@ -176,17 +176,16 @@ export default {
   },
 
   // 覆盖消息记录
-  coversChatRecord(state, { info, temp_id, chatType }) {
+  coversChatRecord(state, { info, temp_id }) {
     let currRoomIndex = state.currRoomIndex;
     let room = state.tempRoomList[currRoomIndex];
     // 当前房间聊天记录
     let chatRecords = room.chatRecords;
     // 查找符合的聊天记录
-    let idx = message.getMessageIndex(chatRecords, temp_id, chatType);
+    let idx = message.getMessageIndex(chatRecords, temp_id);
     info.isLoad = false;
-    // 覆盖这条记录
-    console.log(chatRecords, idx, '....!!!!')
-    chatRecords[idx] = info;
+    // 合并覆盖这条记录
+    chatRecords[idx] = Object.assign(chatRecords[idx] ,info);
     state.tempRoomList = [].concat([], state.tempRoomList)
   }
   

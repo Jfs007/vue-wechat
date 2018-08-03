@@ -40,7 +40,7 @@ let router = new Router({
       name: 'chat',
       component: __import__('messages/chat'),
       meta: {
-        tier: 4,
+        tier: 10,
         requireSignin: true,
         page: 'children'
       }

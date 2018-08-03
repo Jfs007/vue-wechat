@@ -7,10 +7,7 @@ import store from './store'
 import './router/auth'
 import './util/rem.js';
 import './_help';
-import { dateFormat } from './util/misc';
-import { createAPI, Picker, DatePicker, CascadePicker, Sticky } from 'cube-ui'
-
-console.log(Sticky.Ele, 'CubeSticky')
+import { createAPI, Picker, DatePicker, CascadePicker } from 'cube-ui'
 Vue.component(CascadePicker.name, CascadePicker)
 createAPI(Vue, Picker, ['select'], true)
 createAPI(Vue, CascadePicker, ['select'], false)
@@ -78,9 +75,6 @@ import ProgressBar from './components/progressBar.vue'
 
 const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
-
-
-Vue.filter('tformat', (value) => { return dateFormat(typeof value === 'number' ? new Date(value) : new Date(), 'hh:mm')})
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

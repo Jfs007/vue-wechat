@@ -49,7 +49,9 @@ export default {
            name: 'login'
          })
       } catch (error) {
-        
+        this.$router.push({
+           name: 'login'
+         })
       }
      
     }
