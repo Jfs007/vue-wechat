@@ -112,8 +112,9 @@ export default {
         width 100% 
         height 100%
         z-index 10
-        opacity 1
+        opacity 0
         font-size 0
+
 </style>
 
 

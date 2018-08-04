@@ -306,6 +306,7 @@ export default {
       msg.content = dataURL;
     }
     if(type === 'file') {
+
       msg.content = '';
     }
     // 创建出消息的临时id
@@ -315,7 +316,8 @@ export default {
       chatRecord: msg
     });
     createCallback && createCallback();
-    let fileUrlRet = await fileUpload(fileObj.uploadPre(type));
+    let preFile = await fileObj.uploadPre(type, dataURL);
+    let fileUrlRet = await fileUpload(preFile);
     let fileUrl = fileUrlRet.data.src;
     if (room.chatType === 'private') {
       msg = await socketEmit('privateMessage', {

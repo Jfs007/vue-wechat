@@ -1,15 +1,16 @@
 import env from '../conf/env'
 import io from 'socket.io-client'
 import router from '../router/index';
-const chat_conf_env = process.env.NODE_ENV === 'development' ? env.development : env.production;
+
 let socket = io(
-  `ws://${chat_conf_env.HOST}:${chat_conf_env.PORT}`,
+  `ws://${env.HOST}:${env.PORT}`,
   {
-    path: chat_conf_env.PATH
+    path: env.PATH
   }
 )
 socket.on('connect_error', (err) => {
-  console.log(err)
+  console.log(err);
+  alert(JSON.stringify(err))
 })
 // socket.on('connect', (connect) => {
 //   console.log('%c%s', 'color: greenyellow', 'online-----')

@@ -31,7 +31,6 @@ export default {
       white-space: nowrap;
       border: 1px solid #fff;
       box-sizing content-box;
-      
       &.q-dot__content_is-fixed
         position: absolute;
         top: $pxTorem(12)

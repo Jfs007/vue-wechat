@@ -27,7 +27,6 @@
           ref="scroll", 
           :options="options",
           @pulling-down="loadMessage",
-          :data="chatRecords"
           )
           .chat-room-content
             dialogue-wrap( 
@@ -64,9 +63,6 @@ export default {
         pullDownRefresh: {
           txt: '  '
         },
-        pullDownRefreshThreshold: 90,
-        pullDownRefreshStop: 40,
-        pullUpLoadThreshold: 0,
         
       },
       // 房间的序号
@@ -132,7 +128,6 @@ export default {
     socket.off('message.private', this.execAfterRoomNewMsg);
     this.scroll.destroy();
     this.scroll = null;
-    
   },
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
@@ -243,7 +238,7 @@ export default {
 
 
       let timestamp = this.chatRecords[0] ?  this.chatRecords[0].timestamp: Date.now()
-      let scroll = this.$refs['scroll'].scroll;
+      let scroll = this.scroll;
       let maxScrollY = scroll.maxScrollY;
       let chatRecords = null;
       if(this.roomType === 'group') {
@@ -254,14 +249,14 @@ export default {
       // 获取到数据
       if(chatRecords.data.length>0) {
         this.unshiftChatRecords({index: this.currRoomIndex, chatRecords: chatRecords.data});
-      }else {
-        this.$refs.scroll.forceUpdate()
+        this.$nextTick(() => {
+          scroll.refresh();
+          let currMaxScrollY = scroll.maxScrollY;
+          scroll.scrollTo(0, (currMaxScrollY- maxScrollY) >= 0 ? 0: (currMaxScrollY- maxScrollY+65), 10)
+        })
       }
-      this.$nextTick(() => {
-        scroll.refresh();
-        let currMaxScrollY = scroll.maxScrollY;
-        scroll.scrollTo(0, (currMaxScrollY- maxScrollY) >= 0 ? 0: (currMaxScrollY- maxScrollY+65), 10)
-      })
+      // 强制更新
+      this.$refs.scroll.forceUpdate();
       
     },
    

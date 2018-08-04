@@ -1,5 +1,6 @@
 import axios from './axios'
-let prefix = 'api/upload'
+import { api } from './axios';
+let prefix = api+ '/upload'
 let avatarUrl = '/avatar';
 let fileUrl = '/file';
 
