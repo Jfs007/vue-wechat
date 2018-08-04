@@ -178,6 +178,7 @@ export default {
       // 更新房间信息
       let roomInfo = await socketEmit('getPrivateRoomInfo', { id: creater });
       let room = state.tempRoomList[index];
+      room.isActive = true;
       if(room.unread <=0) {
         // 记录最开始未读的那条消息时间
         room.lastUnReadMessage = Date.now();
@@ -216,6 +217,7 @@ export default {
       // 更新房间信息
       let roomInfo = await socketEmit('getRoomInfo', { roomid: roomid });
       let room = state.tempRoomList[index];
+      room.isActive = true;
       if (room.unread <= 0) {
         // 记录最开始未读的那条消息时间
         room.lastUnReadMessage = Date.now();
@@ -236,15 +238,15 @@ export default {
     // 如果房间存在
     if(index>=0) {
       commit('changeRoom', index);
-      return;
+      return void 0;
     }
     let room = null;
     if (chatType === 'private') {
-      room = await dispatch('createrPrivateRoom', {id});
+      room = await dispatch('createrPrivateRoom', { id, isActive: false });
       // 创建房间
     };
     if (chatType === 'group') {
-      room = await dispatch('createrRoom', { id });
+      room = await dispatch('createrRoom', { id, isActive: false });
       
       // 
     }

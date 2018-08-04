@@ -383,14 +383,15 @@ export default {
         z-index 50
         color #ffffff
         &:after 
+          transform-origin 50% 50%
           content " "
           position absolute 
           width $pxTorem(14) 
           height $pxTorem(14) 
           background-color #12b6ff
-          bottom $pxTorem(-7) 
+          bottom $pxTorem(-5) 
           left 50%
-          transform translateX(-50%) rotateZ(-45deg)  translateY(-2px)
+          transform translateX(-50%) rotateZ(45deg)
           z-index 50
         
     .chat-room-content

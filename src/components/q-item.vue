@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.q-item( :class="{ 'q-item_link': isLink , 'q-item_no-border': noBorder }")
+  div.q-item( :class="{ 'q-item_link': isLink , 'q-item_no-border': noBorder }", @click="click")
     .q-item__left 
       slot( name="icon" )
     .q-item__center 
@@ -26,6 +26,11 @@ export default {
     noBorder: {
       type: Boolean,
       default: false
+    }
+  },
+  methods: {
+    click() {
+      this.$emit('click')
     }
   }
 }
