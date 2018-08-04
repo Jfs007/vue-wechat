@@ -17,6 +17,7 @@
           )
         div.chat-targets-container
           cube-slide( 
+            @change="slideChange",
             :autoPlay="false",
             :showDots="false",
             :loop="false", 
@@ -107,6 +108,9 @@ export default {
     },
     mainScroll({x, y}) {
       this.posY = y;
+    },
+    slideChange(index) {
+      this.currTab = this.tabLabels[index].label;
     }
   }
   
