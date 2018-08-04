@@ -1,3 +1,9 @@
+/**
+ * 
+ * 后端数据的好友请求处理
+ * 
+ */
+
 export default class friendRequest{
   originType(origin) {
     return origin === 0 ? '来自搜索添加' : '来自群添加'

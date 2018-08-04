@@ -60,7 +60,7 @@ export default {
   // 样式
   .page-view 
     width 100vw
-    animation-duration 0.25s
+    animation-duration .45s
     position relative
     height 100vh
     font-size $pxTorem(35)
@@ -83,6 +83,7 @@ export default {
     height 100%
     position absolute
     left 0
+    opacity 1
   .page-view-out-enter-active 
     animation-name viewInLeft
   .page-view-out-leave-active 
@@ -94,27 +95,33 @@ export default {
   @keyframes viewInLeft 
     from 
       opacity 0
-      transform translate3d(-100%, 0, 0)
+      left -100%
+      // transform translate3d(-100%, 0, 0)
     to 
       opacity 1
-      transform translate3d(0, 0, 0)
+      left 0
+      // transform translate3d(0, 0, 0)
   @keyframes viewOutLeft 
     from 
       opacity 1
     to 
       opacity 0
-      transform translate3d(-100%, 0, 0)
+      left -100%
+      // transform translate3d(-100%, 0, 0)
   @keyframes viewInRight 
     from 
       opacity 0
-      transform translate3d(100%, 0, 0)
+      left 100%
+      // transform translate3d(100%, 0, 0)
     to 
       opacity 1
-      transform translate3d(0, 0, 0)
+      left 0
+      // transform translate3d(0, 0, 0)
   @keyframes viewOutRight 
     from 
       opacity 1
     to 
       opacity 0
-      transform translate3d(100%, 0, 0)
+      left 100%
+      // transform translate3d(100%, 0, 0)
 </style>

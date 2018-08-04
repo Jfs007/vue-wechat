@@ -5,8 +5,8 @@
         span.iconfont.icon-fanhui 
         span 返回
     cube-scroll    
-      q-list
-        q-item( v-for="user in roomMenbers",  @click.native="toUserCard(user.user)")
+      q-list( v-if="roomMenbers.length")
+        q-item( v-for="user in roomMenbers",  @click.native="toUserCard(user.user)", :key="user._id")
           .room-member-avatar.q-avatar( slot="icon")
             img( :src="user.user.avatar" )
           .room-member-info( slot="label")  
@@ -32,13 +32,13 @@ export default {
       roomMenbers: []
     }
   },
+
   async created() {
     let roomid = this.$route.params.id;
     let roomMenbers = await socketEmit('getRoomUsers', {
       roomid
     });
     this.roomMenbers = roomMenbers.data.roomUsers;
-    console.log(roomMenbers, 'this.roomMenbers')
 
   },
   methods: {

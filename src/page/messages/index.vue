@@ -10,6 +10,7 @@
             button.find-btn 搜索
           div.message-list
             active-room-item(
+              :key="room.id",
               v-for="(room, index) in tempRoomList ", 
               :room="room",
               @click.native="toChatRoom(room, index)",

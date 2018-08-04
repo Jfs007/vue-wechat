@@ -23,6 +23,7 @@ npm install
 npm run dev
 ```
 ## 另外(这很重要)
+请忽略master 分支 吧 ！！
 此项目有配套的后台系统，如果想体验前后台同时开发，可以下载对应的后台系统：[后台项目传送地址](https://github.com/Jfs007/chat-server)。
 
 # 说明

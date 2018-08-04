@@ -8,14 +8,14 @@
       .roomcard-romminfo 
         h1.rcr-name {{roomInfo.name}}
         p.rcr-room-no {{roomInfo.roomNo}}
-    .roomcard-main 
+    .roomcard-main( v-if="roomMenbers.length" ) 
       .roomcard-members 
         .roomcard-members__title(@click="toMemberList") 
           .rmt__label 群聊成员
           .rmt__membersnum 共{{userTotal}}人
             span.link.iconfont.icon-link
         .roomcard-members__content
-          .member( v-for="user in roomMenbers", @click="toUserCard(user.user)" ) 
+          .member( v-for="user in roomMenbers", @click="toUserCard(user.user)", :key="user._id" ) 
             .q-avatar 
               img( :src="user.user.avatar")
             h1.member-text.member-nickname.text_ellipsis {{user.user.nickname}} 

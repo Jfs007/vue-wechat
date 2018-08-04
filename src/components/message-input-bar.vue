@@ -36,7 +36,7 @@ export default {
     async sendMessage() {
       if(this.isDisable) return;
       let message = this.message;
-      this.message = ''
+      this.message = '';
       await this.sendTextMessage({
         // 聊天内容
         content: message, 

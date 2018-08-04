@@ -10,11 +10,9 @@ const desW = 320; //
     recalc = function () {
       var clientWidth = docEl.clientWidth;
       if (clientWidth === undefined) return;
-      console.log(clientWidth, 'clientWidth')
       docEl.style.fontSize = 20 * (clientWidth / desW) + 'px';
   },
   scale = 1 / dpr;
-  console.log(dpr, 'dpr')
   // metaEl.setAttribute('content', 'width=' + docEl.clientWidth*dpr + ',initial-scale=' + scale + ',maximum-scale=' + scale + ',minimum-scale=' + scale + ',user-scalable=no');
   if (doc.addEventListener === undefined) return;
     win.addEventListener(resizeEvt, recalc, false);

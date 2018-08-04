@@ -41,6 +41,7 @@ export default class Message {
   }
   // 消息体，房间信息，是否为私聊 对后端传入的数据进行分析并且合并
   mergeMessage(message, room, userInfo ) {
+    if(!Object.keys(message).length) return {};
     let creater = message.creater;
     let isPrivate = room.chatType === 'private';
     // 获取id

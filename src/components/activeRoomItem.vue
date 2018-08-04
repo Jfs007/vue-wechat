@@ -12,6 +12,7 @@
 </template>
 <script>
 import dot from '@/components/dot'
+import {mapState} from 'vuex';
 export default {
   components: {dot},
   props: {
@@ -28,11 +29,15 @@ export default {
     }
   },
   computed: {
+    ...mapState('user', ['userInfo']),
     // 最新的一条消息
     latestMessage() {
       let chats = this.room.chatRecords;
       let cLength = chats.length;
-      return chats[cLength-1] || {};
+      // 消息合并
+      // 调用合并消息的工具类，，同意消息格式
+      return this.$mergeMessage(chats[cLength-1] || {} , this.room, this.userInfo);
+      // return chats[cLength-1] || {};
     },
     // 房间的名称，，
     roomName() {
