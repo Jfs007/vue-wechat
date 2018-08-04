@@ -318,7 +318,7 @@ export default {
     createCallback && createCallback();
     let preFile = await fileObj.uploadPre(type, dataURL);
     let fileUrlRet = await fileUpload(preFile);
-    let fileUrl = fileUrlRet.data.src;
+    let fileUrl = fileUrlRet.data.src+ '?d='+ Date.now();
     if (room.chatType === 'private') {
       msg = await socketEmit('privateMessage', {
         // 聊天内容
@@ -337,7 +337,6 @@ export default {
         type
       });
     };
-    // 不改变 
     msg.data.content = fileUrl;
     commit('coversChatRecord', { info: msg.data, temp_id });
     // let msg = message.message({ isLoad: true, type })

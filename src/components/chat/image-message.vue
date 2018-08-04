@@ -1,7 +1,8 @@
 <template lang="pug">
-  message-box(:message="message")
+span
+  message-box( :message="message")
     .image-message( @click="showImagePreview")
-      img( :src="`${message.content}${message.isLoad ? '': '?'+Date.now()}`" )
+      img( :src="imageUrl" )
 </template>
 <script>
 import Vue from 'vue'
@@ -15,9 +16,12 @@ export default {
     messageBox
   },
   data() {
+    console.log('change???', this.message.mark_id)
     return {
       images: [],
       initialIndex: 0,
+      isShow: false,
+      dateSuffix: Date.now()
     }
   },
   props: {
@@ -31,9 +35,30 @@ export default {
     // 当前聊天房间消息
     messages() {
       return this.currRoom.chatRecords || [];
+    },
+    imageUrl() {
+      return `${this.message.content}${this.message.isLoad ? '': ''}`
     }
   },
   created() {
+
+    let image = new Image();
+    image.onload = () => {
+      // this.$
+      this.$nextTick(() => {
+        let index = 0;
+        this.messages.find((item, idx) => {
+          if(item._id === this.message._id) {
+            index = idx;
+            return true;
+          }
+        })
+        this.$bus.$emit('c-chat/image-message', index)
+      })
+    }
+    image.src = this.imageUrl ;
+  },
+  mounted() {
   },
   methods: {
     showBeforePrepare() {
@@ -77,6 +102,7 @@ export default {
     width auto
     height auto
     border-radius 4px
+    min-height 0
 </style>
 
 

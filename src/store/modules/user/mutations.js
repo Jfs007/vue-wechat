@@ -172,7 +172,7 @@ export default {
 
   unshiftChatRecords(state, { index, chatRecords} ) {
     let room = state.tempRoomList[index];
-    room.chatRecords = [...chatRecords, ...room.chatRecords];
+    room.chatRecords = [].concat(chatRecords, room.chatRecords);
   },
 
   // 覆盖消息记录

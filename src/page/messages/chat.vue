@@ -110,6 +110,12 @@ export default {
     setTimeout(() => {
       this.delayUnReadTag = true;
     }, 360);
+    this.$bus.$on('c-chat/image-message', (index) => {
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      })
+    })
+    // this.$bus.$on('')
   },
   mounted() {
     this.$nextTick(() => {
@@ -127,8 +133,10 @@ export default {
     this.readPrivateMessage(this.currRoomIndex);
     socket.off('message.room', this.execAfterRoomNewMsg);
     socket.off('message.private', this.execAfterRoomNewMsg);
+    this.$bus.$off('c-chat/image-message')
     this.scroll.destroy();
     this.scroll = null;
+
   },
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
@@ -150,7 +158,7 @@ export default {
     },
     // bscroll 滚动事件绑定
     scrollBind() {
-      scroll = this.scroll
+      scroll = this.scroll;
       scroll.on('scroll', ({x, y}) => {
         // 有进来前未读的消息
         if(this.unreadBeforeRoom) {
@@ -262,6 +270,7 @@ export default {
       }else {
         chatRecords = await socketEmit('getPrivateMsg', {to: this.currRoom.id, timestamp});
       }
+      this.scroll.finishPullDown();
       // 获取到数据
       if(chatRecords.data.length>0) {
         this.unshiftChatRecords({index: this.currRoomIndex, chatRecords: chatRecords.data});
@@ -271,8 +280,9 @@ export default {
           scroll.scrollTo(0, (currMaxScrollY- maxScrollY) >= 0 ? 0: (currMaxScrollY- maxScrollY+65), 10)
         })
       }
+      
       // 强制更新
-      this.$refs.scroll.forceUpdate();
+      // this.$refs.scroll.forceUpdate();
       
     },
    
