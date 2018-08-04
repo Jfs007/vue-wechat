@@ -11,7 +11,7 @@ $picker-confirm-btn-active-color := $color-primary
 // styl常量/函数
 // 三倍图
 $pxTorem($px) {
-  ($px/30)rem
+  ($px/60)rem
 }
 $calc($calc-rs) {
   $calc-rs
@@ -55,6 +55,11 @@ body
     background-color #eaebed 
     color #babbbd
 
+.q-tag 
+  font-size $pxTorem(26)
+  padding $pxTorem(8) $pxTorem(10)
+  line-height: 1
+  display inline-block 
 .q-avatar 
   border-radius 50%  
   img 

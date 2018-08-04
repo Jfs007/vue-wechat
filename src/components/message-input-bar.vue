@@ -9,8 +9,8 @@
 
       ) 发送
     div.messsage-tools 
-      div.message-tool__icon
-        span.iconfont.icon-biaoqing
+      // div.message-tool__icon
+      //   span.iconfont.icon-biaoqing
       div.message-tool__icon
         input( type="file", @change="sendFileHandle" ).upload-input 
         span.iconfont.icon-image

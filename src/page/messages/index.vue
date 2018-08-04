@@ -82,7 +82,7 @@ export default {
   padding-top $hd-bar-height
 .messages-main
   background #323232
-  height $calc(100vh- ($hd-bar-height + $bt-tab-height))
+  height calc(100vh- 2rem)
   .messages-bscroll 
     background #ffffff
     height 101vh

@@ -125,6 +125,26 @@ let router = new Router({
       }]
     },
     {
+      path: '/roomcard/:account',
+      name: 'roomcard',
+      component: __import__('linkman/roomcard/index'),
+      meta: {
+        tier: 8,
+        requireSignin: true,
+        page: 'children'
+      }
+    },
+    {
+      path: '/roomcard/room_member_list/:id',
+      name: 'room_member_list',
+      component: __import__('linkman/roomcard/room-member-list'),
+      meta: {
+        requireSignin: true,
+        tier: 9,
+        page: 'children'
+      }
+    },
+    {
       path: '/edituser',
       name: 'edituser',
       component: __import__('linkman/edituser/index'),

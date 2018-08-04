@@ -5,9 +5,10 @@
         span.iconfont.icon-fanhui
       span( slot='default')
         h1.nickname {{currRoom.info&&currRoom.info.nickname||currRoom.info.name}}
-        p.online-type [{{currRoom.info&&currRoom.info.device}}在线]
+        p.online-type(v-if="currRoom.chatType === 'private'") [{{currRoom.info&&currRoom.info.device}}在线]
       span.hd-bar__right( slot="sec-r")
-        span.iconfont.icon-yonghu( @click="$router.push({name: 'usercard', params: { account: userInfo.account}})" )
+        span.iconfont.icon-yonghu( @click="toInfoCard", v-if="currRoom.chatType === 'private'" )
+        span.iconfont.icon-qunliao(v-else,  @click="toInfoCard")
     .chat-room-wapper
       div.wapper
         transition( 
@@ -132,6 +133,21 @@ export default {
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
     ...mapActions('user', ['readPrivateMessage', 'sendTextMessage']),
+    toInfoCard() {
+      let chatType = this.currRoom.chatType;
+      let routerName = chatType === 'private' ? 'usercard': 'roomcard';
+      let account = chatType === 'private' ? this.userInfo.account: this.currRoom.info.roomNo;
+      let id = chatType === 'private' ? this.userInfo._id: this.currRoom.info._id;
+      this.$router.push({
+        name: routerName,
+        params: {
+          account
+        },
+        query: {
+          id
+        }
+      })
+    },
     // bscroll 滚动事件绑定
     scrollBind() {
       scroll = this.scroll
@@ -289,7 +305,7 @@ export default {
     position relative
     display flex 
     flex-direction column
-    height calc(100vh- 4rem)
+    height calc(100vh- 2rem)
     .wapper 
       height 100%
       position relative

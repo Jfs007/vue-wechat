@@ -11,7 +11,7 @@ const desW = 320; //
       var clientWidth = docEl.clientWidth;
       if (clientWidth === undefined) return;
       console.log(clientWidth, 'clientWidth')
-      docEl.style.fontSize = 10 * (clientWidth / desW) + 'px';
+      docEl.style.fontSize = 20 * (clientWidth / desW) + 'px';
   },
   scale = 1 / dpr;
   console.log(dpr, 'dpr')
