@@ -59,7 +59,15 @@ npm run dev
 ### 登录页面
 ![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/login.jpg)
 ### 聊天
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat.png)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat1.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat2.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat3.jpg)
+### 好友搜索
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/search.jpg)
+### 联系人
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/linkman.jpg)
+
 
 
 

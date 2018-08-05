@@ -5,7 +5,8 @@
         input.message-send__inner-input( v-model="message", contenteditable, ref="input")
       button.q-btn.q-btn_primary.message-send__btn( 
         :class="{ 'q-btn_disable': isDisable }",
-        @touchstart.stop="sendMessage"
+        @touchstart.stop="sendMessage",
+        @click="sendMessage",
 
       ) 发送
     div.messsage-tools 
@@ -39,6 +40,7 @@ export default {
     ...mapActions('user', ['sendFile', 'sendTextMessage']),
 
     async sendMessage(e) {
+      // 阻止默认，，移动端下发送的时候不关闭键盘
       e.preventDefault();
       if(this.isDisable) return;
       let message = this.message;
@@ -51,7 +53,6 @@ export default {
           this.$emit('send', 'text');
         }
       });
-      // this.$refs['input'].focus();
       
     },
     async sendFileHandle(e) {
