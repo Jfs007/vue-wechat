@@ -34,7 +34,7 @@
               :key="message.mark_id",
               :ref="'chat-message-box_'+index",
               v-for="(message, index) in chatRecords",
-              :message="$mergeMessage(message, currRoom, userInfo, roomType !== 'group')") 
+              :message="message") 
       message-input-bar( @send="send")
 
 </template>

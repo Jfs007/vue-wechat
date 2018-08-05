@@ -35,8 +35,7 @@ export default {
       let chats = this.room.chatRecords;
       let cLength = chats.length;
       // 消息合并
-      // 调用合并消息的工具类，，同意消息格式
-      return this.$mergeMessage(chats[cLength-1] || {} , this.room, this.userInfo);
+      return chats[cLength-1] || {};
       // return chats[cLength-1] || {};
     },
     // 房间的名称，，

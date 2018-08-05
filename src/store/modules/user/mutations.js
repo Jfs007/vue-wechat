@@ -160,18 +160,24 @@ export default {
   // 添加聊天记录
   addChatRecords(state, { index, chatRecord }) {
     let room = state.tempRoomList[index];
+    chatRecord = message.mergeMessage(chatRecord, room, state.userInfo)
     room.chatRecords.push(chatRecord);
   },
 
   // 设置聊天记录
-  setChatRecords(state, { index, chatRecords}) {
+  setChatRecords(state, { index, chatRecords }) {
     
     let room = state.tempRoomList[index];
+    chatRecords = chatRecords.map((msg ) => {
+      return message.mergeMessage(msg, room, state.userInfo)   
+    })
     room.chatRecords = chatRecords;
   },
-
   unshiftChatRecords(state, { index, chatRecords} ) {
     let room = state.tempRoomList[index];
+    chatRecords = chatRecords.map((msg) => {
+      return message.mergeMessage(msg, room, state.userInfo)
+    })
     room.chatRecords = [].concat(chatRecords, room.chatRecords);
   },
 

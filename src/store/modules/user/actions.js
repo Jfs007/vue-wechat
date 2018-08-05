@@ -194,9 +194,10 @@ export default {
     let { roomid } = info;
     let tempRoom = new TempRoom(state.tempRoomList);
     let index = tempRoom.tempRoomisExit({ chatType: 'group', id: roomid });
+    let room = null;
     if (index < 0) {
       index = 0;
-      let room = await dispatch('createrRoom', { isActive: true, id: roomid });
+      room = await dispatch('createrRoom', { isActive: true, id: roomid });
       // 记录最开始未读的那条消息时间
       room.lastUnReadMessage = Date.now();
       // 创建房间
@@ -216,14 +217,26 @@ export default {
       });
       // 更新房间信息
       let roomInfo = await socketEmit('getRoomInfo', { roomid: roomid });
-      let room = state.tempRoomList[index];
+      room = state.tempRoomList[index];
       room.isActive = true;
       if (room.unread <= 0) {
         // 记录最开始未读的那条消息时间
         room.lastUnReadMessage = Date.now();
       }
       room.info = roomInfo.data;
-    }
+    };
+
+    // let notification = {
+    //   title: room.info.name,
+    //   options: {
+    //     body: info.content,
+    //     icon: room.info.avatar,
+    //     data: 100,
+    //   }
+    // }
+    // console.log(room.info.avatar, info.content)
+    // new Notification(notification.title, notification.options)
+    // message.mergeMessage(info,)
 
     // 增加未读
     commit('addUnRead', index);

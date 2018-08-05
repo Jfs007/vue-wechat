@@ -15,32 +15,34 @@ createAPI(Vue, DatePicker, ['select'], false)
 
 import { socket } from './socket/socket';
 
+
 console.notice = function (msg) {
   console.log('%c%s', "color: rgb(115, 182, 133)", msg)
 }
 socket.on('friendRequest', (res) => {
-  console.notice('friend')
+  console.notice('friendRequest')
   store.dispatch('user/initRequestList');
   store.commit('user/addUnReadrequest');
 });
 socket.on('agreeFriend', (res) => {
+  console.notice('agreeFriend')
   router.push({name: 'messages'});
   store.dispatch('user/initRequestList');
   
 })
 socket.on('rejectFriend', (res) => {
+  console.notice('rejectFriend')
   store.dispatch('user/initRequestList');
   store.commit('user/addUnReadrequest');
   // router.push({name: 'messages'})
 })
 socket.on('message.private', (info) => {
-  console.notice('message')
-  console.log(info, 'info')
+  console.notice('message.private')
   store.dispatch('user/newPrivateMessage', info.data)
   // store.dispatch('user/createRoom')
 });
 socket.on('message.room', (info) => {
-  console.log(info, 'info.....message.room')
+  console.notice('message.room')
   store.dispatch('user/newRoomMessage', info.data)
 })
 
@@ -54,8 +56,6 @@ socket.on('close', () => {
 socket.on('offline', (res) => {
   console.notice(`该用户${res.userid}下线了`)
 })
-
-
 socket.on('reconnect', () => {
   console.notice('reconnect')
 })
