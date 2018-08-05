@@ -57,16 +57,16 @@ npm run dev
 
 
 ### 登录页面
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/login.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/login.jpg)
 ### 聊天
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat.jpg)
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat1.jpg)
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat2.jpg)
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/chat3.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/chat.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/chat1.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/chat2.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/chat3.jpg)
 ### 好友搜索
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/search.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/search.jpg)
 ### 联系人
-![](https://github.com/Jfs007/vue-wechat/blob/master/screenshots/linkman.jpg)
+![](https://github.com/Jfs007/vue-wechat/blob/master/screenshot/linkman.jpg)
 
 
 
