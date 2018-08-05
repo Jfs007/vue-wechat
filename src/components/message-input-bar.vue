@@ -1,11 +1,11 @@
 <template lang="pug">
   div.message-input-bar 
-    div.message-send 
+    div.message-send
       div.message-send__input
         input.message-send__inner-input( v-model="message", contenteditable, ref="input")
       button.q-btn.q-btn_primary.message-send__btn( 
         :class="{ 'q-btn_disable': isDisable }",
-        @click.stop.prevent="sendMessage"
+        @touchstart.stop="sendMessage"
 
       ) 发送
     div.messsage-tools 
@@ -37,7 +37,9 @@ export default {
   methods: {
     // sendFile
     ...mapActions('user', ['sendFile', 'sendTextMessage']),
-    async sendMessage() {
+
+    async sendMessage(e) {
+      e.preventDefault();
       if(this.isDisable) return;
       let message = this.message;
       this.message = '';

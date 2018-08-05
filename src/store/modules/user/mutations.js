@@ -161,7 +161,6 @@ export default {
   addChatRecords(state, { index, chatRecord }) {
     let room = state.tempRoomList[index];
     chatRecord = message.mergeMessage(chatRecord, room, state.userInfo);
-    console.log(JSON.parse(JSON.stringify(chatRecord)), 'chatRecord')
     room.chatRecords.push(chatRecord);
   },
 
@@ -190,7 +189,6 @@ export default {
     let chatRecords = room.chatRecords;
     // 查找符合的聊天记录
     let idx = message.getMessageIndex(chatRecords, temp_id);
-    
     info.isLoad = false;
     info.creater = chatRecords[idx].creater;
     // 合并覆盖这条记录
