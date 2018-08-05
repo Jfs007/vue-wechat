@@ -2,10 +2,10 @@
   div.message-input-bar 
     div.message-send 
       div.message-send__input
-        input.message-send__inner-input( v-model="message", contenteditable)
+        input.message-send__inner-input( v-model="message", contenteditable, ref="input")
       button.q-btn.q-btn_primary.message-send__btn( 
         :class="{ 'q-btn_disable': isDisable }",
-        @click="sendMessage"
+        @click.stop.prevent="sendMessage"
 
       ) 发送
     div.messsage-tools 
@@ -30,6 +30,10 @@ export default {
       return this.message === ''
     }
   },
+  mounted() {
+  },
+  destroyed() {
+  },
   methods: {
     // sendFile
     ...mapActions('user', ['sendFile', 'sendTextMessage']),
@@ -45,6 +49,7 @@ export default {
           this.$emit('send', 'text');
         }
       });
+      // this.$refs['input'].focus();
       
     },
     async sendFileHandle(e) {

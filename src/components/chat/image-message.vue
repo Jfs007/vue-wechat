@@ -16,7 +16,6 @@ export default {
     messageBox
   },
   data() {
-    console.log('change???', this.message.mark_id)
     return {
       images: [],
       initialIndex: 0,
