@@ -48,6 +48,7 @@ import {mapState, mapMutations, mapActions } from 'vuex'
 import TempRoom from '@/util/tempRoom.js'
 import Message from '@/util/message.js'
 let message = new Message();
+/// 哈哈哈测试
 export default {
   components: {
     hdBar,
