@@ -97,7 +97,7 @@ export default {
     },
     async toChat() {
       let chater = this.cardInfo;
-      await this.changeRoom({chatType: 'private', id: chater._id})
+      // await this.changeRoom({chatType: 'private', id: chater._id})
       this.$router.push({
         name: "chat",
         params: {

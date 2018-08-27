@@ -56,7 +56,7 @@ export default {
    ...mapMutations('user', ['changeRoom']),
    toChatRoom(room, index) {
      let roomType = room.chatType;
-     this.changeRoom(index);
+    //  this.changeRoom(index);
      this.$router.push({
        name: 'chat',
        params: {

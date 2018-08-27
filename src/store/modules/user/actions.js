@@ -367,7 +367,6 @@ export default {
       commit('activeRoom', state.currRoomIndex);
     }
     creater = creater || state.userInfo;
-    console.log(JSON.parse(JSON.stringify(creater)))
     let msg = message.createMessage(
       {
         content,

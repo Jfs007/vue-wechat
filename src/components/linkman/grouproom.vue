@@ -27,10 +27,10 @@ export default {
   methods: {
     ...mapActions('user', ['initRoomList', 'changeRoom']),
     async toChat(room) {
-      await this.changeRoom({
-        id: room._id,
-        chatType: 'group'
-      });
+      // await this.changeRoom({
+      //   id: room._id,
+      //   chatType: 'group'
+      // });
       this.$router.push({
         name: 'chat',
         params: {

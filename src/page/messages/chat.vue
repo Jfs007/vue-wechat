@@ -90,7 +90,7 @@ export default {
   computed: {
     ...mapState('user', ['userInfo', 'currRoomIndex', 'tempRoomList']),
     currRoom() {
-      return this.tempRoomList[this.currRoomIndex];
+      return this.tempRoomList[this.currRoomIndex] || { info: {}, chatRecords: [] };
     },
     chatRecords() {
       let chatRecords = this.currRoom.chatRecords;
@@ -106,7 +106,23 @@ export default {
     // }
     
   },
+  beforeCreate() {
+    console.log('b')
+    
+  },
   created() {
+
+    let { params, query } = this.$route
+    if(this.currRoom) {
+      // this.changeRoom({
+      //   id: params.id, 
+      //   chatType: query.roomType
+      // })
+    }
+    this.changeRoom({
+      id: params.id, 
+      chatType: query.roomType
+    })
     this.unreadBeforeRoom = this.currRoom.unread;
     setTimeout(() => {
       this.delayUnReadTag = true;
@@ -141,7 +157,7 @@ export default {
   },
   methods: {
     ...mapMutations('user', ['addChatRecords', 'unshiftChatRecords', 'activeRoom']),
-    ...mapActions('user', ['readPrivateMessage', 'sendTextMessage']),
+    ...mapActions('user', ['readPrivateMessage', 'sendTextMessage', 'changeRoom']),
     toInfoCard() {
       let chatType = this.currRoom.chatType;
       let routerName = chatType === 'private' ? 'usercard': 'roomcard';
@@ -187,7 +203,7 @@ export default {
     async execUnreadBeforeRoom() {
       scroll = this.scroll;
       let maxScrollY = scroll.maxScrollY;
-      let currRoom = this.tempRoomList[this.currRoomIndex];
+      let currRoom = this.currRoom;
       // 如果没读的消息没超过一定数量，，那自动读取消息
       if(currRoom.unread<=this.unReadBeyondNum) {
         // 通知服务器将消息更新为已读
