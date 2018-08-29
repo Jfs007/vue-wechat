@@ -86,14 +86,6 @@ export default {
     state['friendRequest'] = [].concat([], state['friendRequest']);
   },
 
-
-
-
-
-
-
-  // -------- 关于聊天
-
   addUnReadrequest(state) {
     state.unReadRequest++;
   },
@@ -114,6 +106,17 @@ export default {
     })
   },
   
+
+
+
+
+
+
+
+
+
+
+  // -------- 关于聊天
   // 创建房间
   newTempRoom(state, room) {
     state.tempRoomList.unshift(room);
@@ -136,6 +139,8 @@ export default {
     state.currRoomIndex = index;
   },
 
+
+  
   // 添加未读
   addUnRead(state, index) {
     let room = state.tempRoomList[index];

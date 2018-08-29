@@ -12,6 +12,7 @@
             active-room-item(
               :key="room.id",
               v-for="(room, index) in tempRoomList ", 
+              :index="index",
               :room="room",
               @click.native="toChatRoom(room, index)",
               v-if="room.info&&room.isActive" )  
@@ -21,16 +22,14 @@
 import hdBar from '@/components/hd-bar'
 import btTab from '@/components/bt-tab'
 
-import activeRoomItem from '@/components/activeRoomItem';
+import activeRoomItem from '@/components/active-room-item';
 import { socketEmit } from '@/socket/socket'
 import { mapState, mapMutations } from 'vuex'
-import tempRoom from '@/components/tempRoom'
 import { Scroll } from 'cube-ui'
 export default {
   components: {
     hdBar,
     btTab,
-    tempRoom,
     activeRoomItem,
     cubeScroll: Scroll
   },

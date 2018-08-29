@@ -28,12 +28,11 @@ export default class tempRoom {
     // 未读
     unread: 0,
     chatRecords: [],
-    chatRecordsIds: [],
     id: null,
     // 房间是否为新的房间
     isNewRoom: true,
     // 房间信息
-    info: null,
+    info: {},
     // 房间是否激活 (是否进行过聊天 false表示已创建但未聊过天 )
     isActive: false,
     // 未读的那条消息的时间
@@ -54,7 +53,7 @@ export default class tempRoom {
   let currRoom = this.room({
      chatType: info.chatType,
      id: info.id,
-     info: info.info,
+     info: info.info || {},
      isActive: info.isActive,
      account: info.account
   });
@@ -65,31 +64,29 @@ export default class tempRoom {
 }
 /**
  * 
- * 创建房间 -> 判断房间是否存在 
- * true 存在直接拿来使用
- * false 合并两个人的信息为房间 拉取消息记录
  * 
+ * // 房间结构
  * 
- * 
- * 切换房间就是设置当前房间
- * 
- * 
- * 消息来得时候，，判断是否为当前房间 
- * true 更新房间消息记录 并且判断滚动是否在最底层 不在更新未读消息
- * false 查找房间
- * true 更新房间消息记录 ，并且未读+1
- * false 什么也不做
- * 
- * 
- * 一个房间结构
  * 
  * {
- *  type 房间类型 (群聊/私聊)
- *  room 如果房间类型为群聊则有 群聊房间信息
- *  fromUser 私聊的时候有 发送人
- *  User 私聊的时候有 接收人就是自己
- *  charRecord 聊天记录
- *  unread 消息未读
+ * roomType: 房间类型
+ * fromInfo: {
+ *  id: 房间id,
+ *  // 房间的一些信息
+ *  ...infos
+ *  
+ * },
+ * chatRecords: 房间聊天记录,
+ * isActive: 房间是否激活(不激活不会被显示)
+ * unread: 房间未读消息数
+ * 
  * }
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  * 
  */

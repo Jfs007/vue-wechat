@@ -59,8 +59,8 @@ export default class Message {
       return message;
     };
     // 非群聊判断creater是否被合并过 根据是否为自己获取创建消息者信息
-    let createrInfo = isOneSelf ? userInfo: room.info;
-
+    let createrInfo = isOneSelf ? userInfo: room.info || {};
+    
     if(!creater._id) {
       message.creater = createrInfo;
     }

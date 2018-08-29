@@ -115,9 +115,10 @@ export default {
         ([info.creater] in roomToMessage) || (roomToMessage[info.creater] = 0);
         roomToMessage[info.creater]++;
       });
+      let tempRoom = new TempRoom(state.tempRoomList);
       for(let id in roomToMessage) {
         // 创建私聊
-        let room = await dispatch('createrPrivateRoom', { isActive: true, id });
+        let room = tempRoom.createRoom({ chatType: 'private', isActive: true, id });
         // 创建房间
         // 获取聊天记录
         let chatRecords = await socketEmit('getPrivateMsg', {
@@ -148,96 +149,36 @@ export default {
     }
   },
 
-  // 新的私聊消息
-  async newPrivateMessage({commit, state, dispatch}, info) {
-    let { creater } = info;
-    let tempRoom = new TempRoom(state.tempRoomList);
-    let index = tempRoom.tempRoomisExit({ chatType: 'private', id: creater });
 
-    if(index<0) {
-      index = 0;
-      
-      let room = await dispatch('createrPrivateRoom', {isActive: true, id: creater});
-      
-      // 记录最开始未读的那条消息时间
-      room.lastUnReadMessage = Date.now();
+
+  // 接受消息
+  receiveMessage({ commit, state, dispatch }, info ) {
+    // 消息来自的信息, 消息来自类型(私聊/群聊, 消息来源的id
+    let { fromId, chatType } = info;
+    let room = {};
+    // 判断是否创建临时房间
+    let tempRoom = new TempRoom(state.tempRoomList);
+    let index = tempRoom.tempRoomisExit({ chatType, id: fromId });
+    // 未存在过的临时聊天
+    if(index< 0) {
+      room = tempRoom.createRoom({ chatType, isActive: true, id: fromId });
       // 创建房间
       commit('createRoom', room);
-      // 
-      commit('addChatRecords', {
-        index,
-        chatRecord: info
-      });
-
+      index = 0;
     }else {
-      // 提前房间消息 
-      commit('addChatRecords', {
-        index,
-        chatRecord: info
-      });
-      // 更新房间信息
-      let roomInfo = await socketEmit('getPrivateRoomInfo', { id: creater });
-      let room = state.tempRoomList[index];
-      room.isActive = true;
-      if(room.unread <=0) {
-        // 记录最开始未读的那条消息时间
-        room.lastUnReadMessage = Date.now();
-      }
-      room.info = { ...roomInfo.data.friend, remarkname: roomInfo.data.remarkname };
+      room = state.tempRoomList[index];
     }
-    
-    // 增加未读
-    commit('addUnRead', index);
-  },
-
-  async newRoomMessage({ commit, state, dispatch }, info) {
-    let { roomid } = info;
-    let tempRoom = new TempRoom(state.tempRoomList);
-    let index = tempRoom.tempRoomisExit({ chatType: 'group', id: roomid });
-    let room = null;
-    if (index < 0) {
-      index = 0;
-      room = await dispatch('createrRoom', { isActive: true, id: roomid });
+    // 激活房间
+    room.isActive = true;
+    if (room.unread <= 0) {
       // 记录最开始未读的那条消息时间
       room.lastUnReadMessage = Date.now();
-      // 创建房间
-      commit('createRoom', room);
-      // 
-      commit('addChatRecords', {
-        index,
-        chatRecord: info
-      });
-
-    } else {
-      
-      // 提前房间消息 
-      commit('addChatRecords', {
-        index,
-        chatRecord: info
-      });
-      // 更新房间信息
-      let roomInfo = await socketEmit('getRoomInfo', { roomid: roomid });
-      room = state.tempRoomList[index];
-      room.isActive = true;
-      if (room.unread <= 0) {
-        // 记录最开始未读的那条消息时间
-        room.lastUnReadMessage = Date.now();
-      }
-      room.info = roomInfo.data;
     };
-
-    // let notification = {
-    //   title: room.info.name,
-    //   options: {
-    //     body: info.content,
-    //     icon: room.info.avatar,
-    //     data: 100,
-    //   }
-    // }
-    // console.log(room.info.avatar, info.content)
-    // new Notification(notification.title, notification.options)
-    // message.mergeMessage(info,)
-
+    // 添加聊天记录
+    commit('addChatRecords', {
+      index,
+      chatRecord: info
+    });
     // 增加未读
     commit('addUnRead', index);
   },
@@ -251,20 +192,14 @@ export default {
     // 如果房间存在
     if(index>=0) {
       commit('changeRoom', index);
-      return void 0;
+    }else {
+      let room = tempRoom.createRoom({ chatType, isActive: false, id });
+      commit('createRoom', room);
+      index = 0;
+      commit('changeRoom', index);
     }
-    let room = null;
-    if (chatType === 'private') {
-      room = await dispatch('createrPrivateRoom', { id, isActive: false });
-      // 创建房间
-    };
-    if (chatType === 'group') {
-      room = await dispatch('createrRoom', { id, isActive: false });
-      
-      // 
-    }
-    commit('createRoom', room);
-    commit('changeRoom', 0);
+    // 获取房间信息
+    dispatch('getRoomInfo', { index, chatType, id })
   },
   async createrRoom({commit}, {id, isActive}) {
     let roomInfo = await socketEmit('getRoomInfo', {roomid: id});
@@ -273,21 +208,22 @@ export default {
     room.info = roomInfo.data ;
     return room;
   },
-  /**
-   * 拉取私聊房间信息
-   * @param {*} param0 
-   * @param {*} param1 
-   * 返回房间对象
-   * 
-   */
-  async createrPrivateRoom({commit, state, dispatch}, {id, isActive }) {
-    // 房间信息
-    let roomInfo = await socketEmit('getPrivateRoomInfo', {id});
-    let tempRoom = new TempRoom();
-    let room = tempRoom.createRoom({ chatType: 'private', isActive, id });
-    room.info = { ...roomInfo.data.friend, remarkname: roomInfo.data.remarkname };
-    return room;
+  // 获取房间信息并且设置
+  async getRoomInfo({commit, state, dispatch}, { chatType, id }) {
+    let tempRoom = new TempRoom(state.tempRoomList);
+    let index = tempRoom.tempRoomisExit({ chatType, id });
+    let socketType = chatType === 'private' ? 'getPrivateRoomInfo' : 'getRoomInfo';
+    let params = chatType === 'private' ? { id } :{ roomid: id };
+    // 
+    let roomInfo = await socketEmit(socketType, params);
+    let room = state.tempRoomList[index];
+    room.info = roomInfo.data;
+    commit('setChatRecords', {
+      index, 
+      chatRecords: room.chatRecords
+    })
   },
+ 
   // 添加房间私聊聊天记录
   async getPrivate({ commit, state }, info) {
     let { id, limit } = info;

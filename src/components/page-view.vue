@@ -60,7 +60,7 @@ export default {
   // 样式
   .page-view 
     width 100vw
-    animation-duration .45s
+    animation-duration 0.45s
     position relative
     height 100vh
     font-size $pxTorem(35)

@@ -12,7 +12,7 @@
 </template>
 <script>
 import dot from '@/components/dot'
-import {mapState} from 'vuex';
+import {mapState, mapActions} from 'vuex';
 export default {
   components: {dot},
   props: {
@@ -26,7 +26,20 @@ export default {
           chatRecords: []
         }
       }
+    },
+    index: {
+      type: Number
     }
+  },
+
+  created() {
+    this.getRoomInfo({
+      chatType: this.room.chatType,
+      id: this.room.id,
+    })
+  },
+  methods: {
+    ...mapActions('user', ['getRoomInfo'])
   },
   computed: {
     ...mapState('user', ['userInfo']),

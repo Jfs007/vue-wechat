@@ -102,6 +102,9 @@ export default {
         name: "chat",
         params: {
           id: chater.id
+        },
+        query: {
+          roomType: 'private'
         }
       })
       
@@ -112,7 +115,6 @@ export default {
 <style lang="stylus" scoped>
 // 子页面动画效果
 .user-card  
-  position relative
   background-image url('../images/login2.jpg')
   background-repeat no-repeat 
   background-size 100% auto

@@ -38,12 +38,12 @@ socket.on('rejectFriend', (res) => {
 })
 socket.on('message.private', (info) => {
   console.notice('message.private')
-  store.dispatch('user/newPrivateMessage', info.data)
+  store.dispatch('user/receiveMessage', { ...info.data, chatType: 'private' })
   // store.dispatch('user/createRoom')
 });
 socket.on('message.room', (info) => {
   console.notice('message.room')
-  store.dispatch('user/newRoomMessage', info.data)
+  store.dispatch('user/receiveMessage', { ...info.data, chatType: 'group' })
 })
 
 
@@ -71,7 +71,7 @@ Vue.config.productionTip = false
 import FastClick from 'fastclick'
 FastClick.attach(document.body);
 
-import ProgressBar from './components/progressBar.vue'
+import ProgressBar from './components/progress-bar.vue'
 
 const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)

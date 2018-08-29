@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.dialogue-wrap 
+  div.dialogue-wrap( :class="{'animation--fadeleft': !message.isSelf }") 
     // 系统消息类型
     div.chat-message_system( v-if=" message.msgType === 1 " )
       .chat-message__tag {{message.content}} 
@@ -47,17 +47,19 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-  @keyframes fadeInUps  
+  @keyframes fadeLeft 
     0%
       opacity: 0;
-      transform: translate3d(0, 24px, 0);
+      transform: translate3d(-15px, 0, 0);
     100% 
       opacity: 1;
       transform: translate3d(0, 0, 0);
   .dialogue-wrap 
     padding $pxTorem(26) $pxTorem(20) 
-    animation fadeInUps 0.85s 
-    animation-fill-mode forwards
+    &.animation--fadeleft
+      animation fadeLeft 0.55s 
+      animation-fill-mode forwards
+      transform: translate3d(-15px, 0, 0);
     .chat-message_user
       display flex
       width 100%

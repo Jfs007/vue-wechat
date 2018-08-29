@@ -4,8 +4,9 @@
       span( slot='sec-l', @click="$router.go(-1)")
         span.iconfont.icon-fanhui
       span( slot='default')
-        h1.nickname {{currRoom.info&&currRoom.info.nickname||currRoom.info.name}}
-        p.online-type(v-if="currRoom.chatType === 'private'") [{{currRoom.info&&currRoom.info.device}}在线]
+        h1.nickname( v-if="currRoom.chatType === 'private'" ) {{ currRoom.info.nickname }}
+        h1.nickname( v-else ) {{ currRoom.info.name }}
+        p.online-type(v-if="currRoom.chatType === 'private'") [{{currRoom.info.device}}在线]
       span.hd-bar__right( slot="sec-r")
         span.iconfont.icon-yonghu( @click="toInfoCard", v-if="currRoom.chatType === 'private'" )
         span.iconfont.icon-qunliao(v-else,  @click="toInfoCard")
@@ -106,23 +107,14 @@ export default {
     // }
     
   },
-  beforeCreate() {
-    console.log('b')
-    
-  },
+  
   created() {
 
-    let { params, query } = this.$route
-    if(this.currRoom) {
-      // this.changeRoom({
-      //   id: params.id, 
-      //   chatType: query.roomType
-      // })
-    }
+    let { params, query } = this.$route;
     this.changeRoom({
       id: params.id, 
       chatType: query.roomType
-    })
+    });
     this.unreadBeforeRoom = this.currRoom.unread;
     setTimeout(() => {
       this.delayUnReadTag = true;
